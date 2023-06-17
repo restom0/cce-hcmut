@@ -1,0 +1,66 @@
+div.login{
+    display: flex;
+    height: 30vh;
+}
+h1{
+    text-align: center;
+    margin-right: 80vh;
+}
+.left{
+    display: flex;
+    flex-direction: column;
+    width: 30%;
+    height: 30vh;
+}
+.middle{
+    width: 1%;
+    height: 30vh;
+}
+.right{
+    display: flex;
+    flex-direction: column;
+    width: 30%;
+    height: 30vh;
+}
+button,input{
+    align-self: center;
+    width: 60%;
+    height: 5vh;
+    margin-top: 1vh;
+    margin-bottom: 1vh;
+    border: none;
+    color: white;
+    font-weight: bold;
+}
+button{
+    background-color: rgb(32, 166, 32);
+}
+input{
+    border: 1px solid black;
+}
+.twitter{
+    background-color:rgb(48, 176, 239);
+    
+}
+.google{
+    background-color: rgb(253, 2, 2);
+}
+.facebook{
+    background-color: blue;
+}
+div.banner{
+    background-color: rgb(0, 0, 0);
+    color: white;
+    height: 4vh;
+    margin-right: 80vh;
+    padding-top: 1vh;
+}
+span.signup{
+    float: left;
+    margin-left: 20vh;
+}
+span.option{
+    float: right;
+    margin-right: 20vh;
+}
+

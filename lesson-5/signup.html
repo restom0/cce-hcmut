@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=<device-width>, initial-scale=1.0" />
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="./signup.css" class="css" />
+  </head>
+  <body>
+    <h1>Sign Up</h1>
+    <p>Please fill in this form to create an account</p>
+    <br />
+    <form>
+      <label class="big" for="email">Email</label>
+      <br />
+      <input type="text" class="big" name="email" placeholder="Enter Email" />
+      <br />
+      <label class="big" for="password">Password</label>
+      <br />
+      <input
+        type="password"
+        class="big"
+        name="password"
+        placeholder="Enter Password"
+      />
+      <br />
+      <label class="big" for="repassword">Repeat Password</label>
+      <br />
+      <input
+        type="password"
+        class="big"
+        name="repassword"
+        placeholder="Repeat Password"
+      />
+      <br />
+      <input type="checkbox" name="reme" id="reme" />
+      <label for="reme">Remember me</label>
+    </form>
+    <p>
+      By creating an accunt you agree to our
+      <a href="Terms & Privacy" target="_blank" rel="noopener noreferrer"
+        >Terms & Privacy</a
+      >
+    </p>
+    <div class="confirm">
+      <button class="cancel">Cancel</button>
+      <button class="signup">Sign Up</button>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,59 @@
+<html>
+<head>
+	<title>menu cap 2</title>
+	<style type="text/css">
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		.ds{
+			list-style-type: none;
+			background-color: #7fffd4;
+			text-align: center;
+		}
+		li{
+			display: inline-block;
+			width: 120px;
+			height: 40px;
+			line-height: 40px;
+			position: relative;
+		}
+		a{
+			text-decoration: none;
+			display: block;
+		}
+		a:hover{
+			background: #F1F1F1;
+			color: red;
+		}
+		.sub{
+			display: none;
+			position: absolute;
+			background: pink;
+		}
+		.main ul li:hover .sub{
+			display: block;
+		}
+		
+	</style>
+</head>
+<body>
+	<div class="main">
+		<ul class="ds">
+			<li class=""><a href="#">Trang chủ</a></li>
+			<li><a href="#">Giới thiệu</a></li>
+			<li><a href="#">Sản phẩm</a>
+				<ul class="sub">
+					<li><a href="#">Thiết kế web</a></li>
+					<li><a href="#">Hải sản</a></li>
+					<li><a href="#">Kim cương</a></li>
+				</ul>
+			</li>
+			<li><a href="#">Dịch vụ</a></li>
+			<li><a href="#">Hỏi đáp</a></li>
+			<li><a href="#">Liên hệ</a></li>
+		</ul>
+	</div>
+
+</body>
+</html>

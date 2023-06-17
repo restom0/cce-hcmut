@@ -1,0 +1,10 @@
+div.logo{
+    width: 30%;
+    height: 70px;
+    background-color: red;
+}
+div.banner{
+    width: 70%;
+    height:70px;
+    background-color:green;
+}

@@ -1,0 +1,25 @@
+div.form{
+    display: flex;
+}
+div.title{
+    display: flex;
+    flex-direction: column;
+    width: 20%;
+    margin-left: 2vh;
+    line-height: 2.5vh;
+    
+}
+div.input{
+    display: flex;
+    flex-direction: column
+}
+input{
+    padding-bottom: 0.5;
+    margin-bottom: 3vh;
+}
+input.baking{
+    margin-bottom: 1.7vh;    
+}
+button{
+    margin-left:2vh
+}
