@@ -1,0 +1,202 @@
+*{
+    margin: 0;
+    padding: 0;
+
+}
+.banner{
+    margin-top: 1vh;
+    display: flex;
+    padding-left: 20vh;
+    padding-right: 30vh;
+}
+ul{
+    display: flex;
+    list-style-type: none;
+    
+}
+ul.col{
+    display: flex;
+    flex-direction: column;
+    padding-left: 0;
+}
+a{
+    line-height: 5vh;
+}
+select{
+    border: 0;
+}
+li{
+    padding-left: 1vh;
+    padding-right: 1vh;
+}
+div.heading{
+    padding-left: 76vh;
+}
+.heading, a{
+    text-decoration: none;
+    color: black;
+}
+button.heading{
+    border: none;
+    outline: none;
+    margin: 0;
+}
+.content{
+    display: none;
+}
+.heading:hover .content, .heading.red:hover .content, .heading.red:hover .content.sub{
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    background-color: white;
+    line-height: 3vh;
+    width: 15vh;
+    margin-left: 0;
+    padding-left: 2vh;
+    margin-top: 2.3vh;
+}
+div.menu{
+    padding-right: 30vh;
+    padding-left: 21vh;
+    margin-top: 3vh;
+    margin-bottom: 3vh;
+    display: flex;
+}
+div.searchbar{
+    margin-top: 1vh;
+    display: flex;
+    height: 3vh;
+    padding-right: 0;
+}
+input{
+    width: 50vh;
+    height: 4vh;
+    padding-left: 0;
+    padding-right: 0;
+}
+#all{
+    border: 1px solid black;
+    height: 4.7vh;
+}
+button.search{
+    border: 1px solid black;
+    height: 4.6vh;
+    width: 5vh;
+    font-size: 15pt;
+    padding-top: 0.5vh;
+    text-align: center;
+    white-space: 0;
+    padding-left: 0;
+    margin-left: 0;
+}
+div.like{
+    padding-left: 10vh;
+    display: flex;
+    margin-top: 1.5vh;
+}
+.logo{
+    padding-right: 11.25vh;
+}
+.like{
+    font-size: 20pt;
+}
+.shopping{
+    padding-top: 1vh;
+    padding-left: 10vh;
+    padding-right: 2vh;
+}
+button.buy{
+    margin-top: 1vh;
+    height: 5vh;
+    width: 5vh;
+    background-color: black;
+}
+div.sub-menu{
+    padding-left: 20vh;
+    margin-bottom: 4vh;
+    display: flex;
+    background-color: red;
+    color: white;
+    font-weight: bold;
+    height: 6vh;
+    padding-top: 1vh;
+}
+button.heading.red{
+    background-color: red;
+    color: white;
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: bold;
+    font-size: 20pt;
+    padding-top: 1vh;
+}
+
+.container{
+    margin-top: 2vh;
+    display: flex;
+    flex-direction: column;
+    padding-left: 2vh;
+}
+.content.sub{
+    width: 100%;
+}
+.column{
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: auto auto auto;
+    width: 75vh;
+}
+div.img{
+    width: 30vh;
+    height: auto;
+    background-image: url("https://vapa.vn/wp-content/uploads/2022/12/hinh-anh-nho-cute-001.jpg");
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+div.row{
+    margin: 0;
+    display: flex;
+    width: 150vh;
+}
+li.right{
+    float: right;
+    padding-left: 23vh;
+    font-weight: bold;
+    font-size: 20pt;
+    padding-top: 1vh;
+}
+li.col{
+    font-weight: normal;
+}
+div.slider{
+    width: 100%;;
+}
+div.discount{
+    display: flex;
+    margin-left: 15vh;
+}
+div.container{
+    margin-top: 5vh;
+    margin-left: 3vh;
+    margin-right: 2vh;
+    padding-top: 2vh;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    font-size: 15.5pt;
+    width: 45vh;
+    height: 10vh;
+}
+div.container.green{
+    background-color: #60cf60;
+}
+div.container.yellow{
+    background-color:darkorange;
+}
+div.container.blue{
+    background-color: rgb(59, 145, 202);
+}
+span{
+    color: white;
+    line-height: 4vh;
+}
