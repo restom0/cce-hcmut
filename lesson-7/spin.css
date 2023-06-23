@@ -1,0 +1,21 @@
+.constant{
+    position: relative;
+    height: 100px;
+    width: 100%;
+}
+.spin{
+    position: absolute;
+    width: 100%;
+    height: 100px;
+    animation: spin 5s infinite linear;
+    transform-style: preserve-3d;
+    text-align: center;
+}
+@keyframes spin {
+    from{
+        transform: rotateY(0deg);
+    }
+    to{
+        transform: rotateY(360deg);
+    }
+}
