@@ -1,0 +1,47 @@
+a{
+    padding-top: 2vh;
+    color: white;
+    text-decoration: none;
+    height: 6vh;
+}
+@media screen and (min-width:769px){
+.menu{
+    background-color: black;
+    display: grid;
+    grid-template-columns: 5% 5% 5% 5% 5% 5%;
+    text-align: center;
+    height: 6vh;
+}
+.fa-solid.fa-bars{
+    display: none;
+}
+a:hover{
+    background-color: yellow;
+    color: black;
+    height: 4vh;
+} 
+}
+@media screen and (max-width:768px) {
+    .menu{
+        background-color: black;
+        display: grid;
+        width: 100%;
+        line-height: 4vh;
+        padding: 10px;
+        position: relative;
+    }
+    a {
+        position: absolute;
+        visibility: hidden;
+    }
+    .menu:hover a{
+        visibility: visible;
+        background-color: black;
+        display: grid;
+        width: 100%;
+        position: relative;
+    }
+    a:hover{
+        background-color: yellow;
+    } 
+}

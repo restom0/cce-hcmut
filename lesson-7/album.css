@@ -1,0 +1,45 @@
+#codinh{
+    position: relative;
+    perspective: 1000px;
+    padding-left: 180px; height: 160px;
+
+}
+#xoay{
+    transform-origin: 180px 0 0;
+    position: absolute;
+    animation: xoaydi 8s infinite linear;
+    transform-style: preserve-3d;
+    }
+
+@keyframes xoaydi{
+    from{
+        transform: rotateY(0deg);
+    }
+    to{
+        transform: rotateY(360deg);
+    }
+}
+
+#xoay img {
+    position: absolute;
+    border: 1px solid #ccc;
+    background: rgba(255,255,255,0.8);
+    padding: 0 0 0 100px; /*tạo khoảng cách bên trái từ hình đến tâm xoay 100px*/ 
+  }
+
+.hinh1{
+    transform: rotateY(0deg) translateX(180px);/*tâm xoay cách trục X 180px và bắt đầu từ 0deg*/
+
+}
+.hinh2{
+    transform: rotateY(72deg) translateX(180px);/*tâm xoay cách trục X 180px và bắt đầu từ 72deg*/
+}
+.hinh3{
+    transform: rotateY(144deg) translateX(180px);
+}
+.hinh4{
+    transform: rotateY(216deg) translateX(180px);
+}
+.hinh5{
+    transform: rotateY(288deg) translateX(180px);
+}
