@@ -24,5 +24,8 @@ div.hinh:hover .hinh-an{
     visibility: visible;
     opacity: 1;
     bottom: 0;
-    transition-duration: 5s;
+    transition-duration: 1s;
+}
+.icon1{
+    background-image: url("");
 }

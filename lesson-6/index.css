@@ -4,32 +4,23 @@
     box-sizing: border-box;
 }
 body{
+    width: 100%;
     padding-left: 20vh;
-    padding-right: 30vh;
+    padding-right: 10vh;
     font-size: 14pt;
 }
 a{
     text-decoration: 0;
 }
 div.banner{
-    margin: 1vh;
-    display: inline;
+    margin-top: 1vh;
+    display: grid;
+    grid-template-columns: 65% 40%;
+    justify-content: space-between;
 }
 ul.banner{
     display: flex;
     list-style-type: none;
-}
-li.banner.left{
-    padding-right: 4vh;
-}
-div.banner.left{
-    float: left;
-}
-div.banner.right{
-    float: right;
-}
-li.banner.right{
-    padding-left: 5vh;
 }
 button.heading{
     float: right;
