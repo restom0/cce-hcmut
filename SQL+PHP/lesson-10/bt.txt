@@ -1,0 +1,78 @@
+1. In ra danh sách sản phẩm: Ma sp Ten sp có Ma loại là pt_c
+2. In danh sách sản phẩm ( Ma sp, Ten sp, giá bán) có hương vị vani, bạc hà
+3. In ra danh sách sản phẩm ( Ma sp, Ten sp,ngay sx, giá bán) có Ma sản phẩm bắt đầu bằng chữ m và kết thúc là 33
+4. In ra danh sách sản phẩm ( Ma sp, Ten sp, giá bán) có Ma loại SN_TC, giá bán từ 400k đến 500k
+5. Xuất ra danh sách sản phẩm ( Ma sp, Ten sp, Ma loại, giá bán) có Ma loại là SN_TC hoặc BT_C giá bán từ 400k đến 500k
+6. Xuất ra các hóa đơn được bán ra từ ngay 6/7/2023 8/7/2023
+7. Xuất ra các hóa đơn trong Month 7, sắp xếp theo ngay xuất tăng dần  và giá trị hóa đơn giảm dần
+8.  Xuất ra danh sách khach_hang đã mua hàng từ ngay 1/7 đến ngay 8/7/2023
+9. In ra danh sách sản phẩm được khach_hang Ten là phi phụng mua trong ngay 6/7/2023
+10. In ra danh sách hóa đơn do nhân viên có Ten quỳnh anh lập trong ngay 6/7/2023
+11. Tìm các hóa đơn có Ma số là HD0003 hoặc HD0007, mỗi sản phẩm có số lượng từ 5 đến 10
+12. Tìm các hóa đơn có cùng lúc 2 sản phẩm M033 và M034, mỗi sản phẩm mua với số lượng từ 2 đến 5 
+13. In ra các sản phẩm không bán đc
+14. In ra các sản phẩm không bán đc trong Month 6/2023
+15. có bao nhiêu hóa đơn không phải của khach_hang thành viên mua
+16. in ra hóa đơn có giá trị cao nhất và hóa đơn có giá trị thấp nhất
+17. tính giá trị trung bình của các hóa đơn được bán ra trong Month 7
+18. in ra 3 khach_hang có doanh số cao nhất
+19. Với từng Ma loại tìm sản phẩm có giá bán cao nhất, thấp nhất , trung bình của từng sản phẩm
+20. tính tổng số lượng của từng sản phẩm từ ngay 6/7/2023
+21. tìm Month có doanh số bán hàng thấp nhất trong 2023
+22. Xuất ds SP(Ten SP, Ten loại sp, số lượng, đơn giá, ngay sản xuất) có loại SP là "pt_c"
+1. SELECT Ma_sp, Ten_sp 
+FROM san_pham 
+WHERE Ma_loai= 'pt_c'
+2. SELECT Ma_sp, Ten_sp, Gia_ban 
+FROM san_pham 
+WHERE Huong_vi IN ('vani', 'bạc hà')
+3. SELECT Ma_sp, Ten_sp, Ngay_sx, Gia_ban 
+FROM san_pham 
+WHERE Ma_sp LIKE 'm%33'
+4. SELECT Ma_sp, Ten_sp, Gia_ban 
+FROM san_pham 
+WHERE Ma_loai = 'SN_TC' AND Gia_ban BETWEEN 400000 AND 500000
+5. SELECT Ma_sp, Ten_sp, Ma_loai, Gia_ban 
+FROM san_pham 
+WHERE (Ma_loai = 'SN_TC' OR Ma_loai = 'PT_C') AND Gia_ban BETWEEN 400000 AND 500000
+6. SELECT * 
+FROM hoa_don 
+WHERE ngay_xuat BETWEEN '2023-07-06' AND '2023-07-08'
+7. SELECT * 
+FROM hoa_don 
+WHERE ngay_xuat LIKE '2023-07%' ORDER BY ngay_xuat ASC, value_hoa_don DESC
+8. SELECT * 
+FROM hoa_don 
+WHERE ngay_xuat BETWEEN '2023-07-01' AND '2023-07-08'
+9. SELECT sp.Ma_sp, sp.Ten_sp 
+FROM san_pham sp INNER JOIN hoa_don ON san_pham.Ma_sp = hoa_don.Ma_sp INNER JOIN khach_hang ON hoa_don.Ma_kh = khach_hang.Ma_kh 
+WHERE kh.Ten_kh = 'phi phụng' AND DATE(hoa_don.ngay_ban) = '2023-07-06'
+10. SELECT * 
+FROM hoa_don INNER JOIN nhan_vien ON hoa_don.Ma_nv = nhan_vien.Ma_nv 
+WHERE nhan_vien.Ten_nv = 'quỳnh anh' AND DATE(hoa_don.ngay_xuat) = '2023-07-06'
+11. SELECT * 
+FROM hoa_don 
+WHERE (Ma_hd = 'HD0003' OR Ma_hd = 'HD0007') AND (So_luong BETWEEN 5 AND 10)
+12. SELECT * 
+FROM hoa_don 
+WHERE (Ma_sp = 'M033' AND So_luong BETWEEN 2 AND 5) OR (Ma_sp = 'M034' AND So_luong BETWEEN 2 AND 5)
+13. SELECT * FROM san_pham WHERE So_luong = 0
+14. SELECT * FROM san_pham WHERE So_luong = 0 AND Ngay_ban LIKE '2023-06%'
+15. SELECT COUNT(*) 
+FROM hoa_don 
+WHERE Ma_kh NOT LIKE 'TV%'
+16. SELECT * 
+FROM hoa_don ORDER BY value_hoa_don DESC LIMIT 1; 
+SELECT * 
+FROM hoa_don ORDER BY value_hoa_don ASC LIMIT 1
+17. SELECT AVG(value_hoa_don) FROM hoa_don WHERE ngay_xuat LIKE '2023-07%'
+18. SELECT Ma_kh, SUM(value_hoa_don) AS sum FROM hoa_don GROUP BY Ma_kh ORDER BY sum DESC LIMIT 3
+19. SELECT Ma_loai, MAX(Gia_ban) AS Gia_ban_max, MIN(Gia_ban) AS Gia_ban_min, AVG(Gia_ban) AS Gia_ban_avg FROM san_pham GROUP BY Ma_loai
+20. SELECT Ma_sp, SUM(So_luong) AS count FROM hoa_don WHERE ngay_xuat = '2023-07-06' GROUP BY Ma_sp
+21. SELECT MONTH(ngay_xuat) AS Month, SUM(value_hoa_don) AS total_income 
+FROM hoa_don 
+WHERE ngay_xuat BETWEEN '2023-01-01' AND '2023-12-31' GROUP BY Month ORDER BY total_income ASC LIMIT 1
+22. SELECT sp.Ten_sp, lsp.Ten_loai_sp, sp.So_luong, sp.Don_gia, sp.Ngay_sx
+FROM san_pham sp
+INNER JOIN loai_san_pham lsp ON sp.Ma_loai_sp = lsp.Ma_loai_sp
+WHERE lsp.Ten_loai_sp = 'pt_c'
