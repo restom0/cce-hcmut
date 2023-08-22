@@ -1,3 +1,0 @@
-SELECt *
-FROM
-    USERS
