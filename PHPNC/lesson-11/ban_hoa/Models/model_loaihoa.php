@@ -1,18 +1,17 @@
  <?php
     require_once 'system/model_system.php';
-    class model_hangsua extends model_system
+    class model_loaihoa extends model_system
     {
-        function store($ma, $ten, $dc, $dt, $em)
+        function store($ten)
         { //hàm lưu 1 record vào table
-            $sql = "Insert Into hang_sua Values('$ma','$ten', '$dc','$dt','$em')";
+            $sql = "Insert Into loai(ten_loai) Value('$ten')";
             $kq = $this->execute($sql);
             return $kq;
         }
-        function update($ma, $ten, $dc, $dt, $em)
+        function update($id, $ten)
         { //hàm cập nhật 1 record vào table
-            $sql = "UPDATE hang_sua SET Ma_hang_sua='$ma', Teng_hang_sua='$ten', 
-                            Dia_chi = '$dc', Dien_thoai='$dt', Email='$em' 
-                            WHERE ma_hang_sua='$ma'";
+            $sql = "UPDATE loai SET ten_loai='$ten'
+                            WHERE id=$id";
             $kq = $this->execute($sql);
             return $kq;
         }
@@ -21,13 +20,13 @@
         }
         function listrecords()
         { //hàm lấy các record trong table
-            $sql = "SELECT * FROM hang_sua";
+            $sql = "SELECT * FROM loai";
             $kq = $this->query($sql);
             return $kq;
         }
         function detailrecord($id)
         { //hàm lấy chi tiết 1 record trong table
-            $sql = "SELECT * FROM hang_sua WHERE Ma_hang_sua='$id'";
+            $sql = "SELECT * FROM loai WHERE id='$id'";
             $kq = $this->query($sql);
             $kq = $kq->fetch_assoc();
             return $kq;
