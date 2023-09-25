@@ -27,4 +27,21 @@ class model_sanpham extends model_system
         $result = $this->queryOne($sql);
         return $result;
     }
+    function search($kw)
+    {
+        if (is_numeric($kw)) {
+            $sql = "SELECT * FROM hoa, loai where hoa.id_loai=loai.id and hoa.gia_ban <= $kw  ORDER BY loai.id";
+        } else {
+            $sql = "SELECT * FROM hoa, loai where hoa.id_loai=loai.id and hoa.tp_chinh like '%$kw%'  ORDER BY loai.id";
+        }
+        $kq = $this->query($sql);
+        return $kq;
+    }
+    function detailrecord($id)
+    { //hàm lấy chi tiết 1 record trong table
+        $sql = "SELECT * FROM hoa WHERE id=$id";
+        $kq = $this->query($sql);
+        $kq = $kq->fetch_assoc();
+        return $kq;
+    }
 } //class

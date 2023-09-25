@@ -39,14 +39,16 @@ class khachhang
     {
         $list = $this->model->listrecords();
         $page_title = "Danh sách hãng sữa";
+        $page_loai = "Views/listloai_layout2.php";
         $page_files = "views/khachhang/list.php";
-        require_once("layout.php");
+        require_once("layout2.php");
     }
     function addnew()
     {
-        $page_title = "Thêm Hãng Sữa";
+        $page_title = "Thêm khách hàng";
+        $page_loai = "Views/listloai_layout2.php";
         $page_files = "views/khachhang/addnew.php";
-        require_once("layout.php");
+        require_once("layout2.php");
     }
 
     function store()
@@ -72,8 +74,9 @@ class khachhang
         $ma = $_GET["ma"];
         $row = $this->model->detailrecord($ma);
         $page_title = "Cập nhật Hãng Sữa";
+        $page_loai = "Views/listloai_layout2.php";
         $page_files = "views/khachhang/edit.php";
-        require_once("layout.php");
+        require_once("layout2.php");
     }
     function update()
     {

@@ -39,14 +39,16 @@ class loaihoa
     {
         $list = $this->model->listrecords();
         $page_title = "Danh sách Loại hoa";
+        $page_loai = "Views/listloai_layout2.php";
         $page_files = "Views/loaihoa/list.php";
-        require_once("layout.php");
+        require_once("layout2.php");
     }
     function addnew()
     {
         $page_title = "Thêm Hãng Sữa";
+        $page_loai = "Views/listloai_layout2.php";
         $page_files = "Views/loaihoa/addnew.php";
-        require_once("layout.php");
+        require_once("layout2.php");
     }
 
     function store()
@@ -69,8 +71,9 @@ class loaihoa
         $ma = $_GET["ma"];
         $row = $this->model->detailrecord($ma);
         $page_title = "Cập nhật Hãng Hoa";
+        $page_loai = "Views/listloai_layout2.php";
         $page_files = "Views/loaihoa/edit.php";
-        require_once("layout.php");
+        require_once("layout2.php");
     }
     function update()
     {

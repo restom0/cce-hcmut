@@ -26,8 +26,9 @@ class donhang
     {
         $list = $this->model->listrecords();
         $page_title = "";
+        $page_loai = "Views/listloai_layout2.php";
         $page_files = "Views/donhang/list.php";
-        require_once("layout.php");
+        require_once("layout2.php");
     }
 
     function detail()
@@ -35,7 +36,8 @@ class donhang
         $ma = $_GET["ma"];
         $list = $this->model->detailrecord($ma);
         $page_title = "";
+        $page_loai = "Views/listloai_layout2.php";
         $page_files = "Views/donhang/detail.php";
-        require_once("layout.php");
+        require_once("layout2.php");
     }
 }
