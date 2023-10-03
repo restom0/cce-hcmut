@@ -1,0 +1,14 @@
+﻿Bài 02
+- màn hình lớn hiện 2 cột: bằng nhau (lg)
+- màn hình vừa hiện 2 cột: trái:4 phải:8 (md)
+- màn hình nhỏ hiện 2 cột: trái:9 phải:3 (sm)
+Bài 03
+- màn hình lớn hiện 3 cột: bằng nhau (lg)
+- màn hình vừa hiện 2 cột: bằng nhau (md)
+- màn hình nhỏ hiện 1 cột: (sm)
+Bài 04
+- màn hình lớn 3 cột bằng
+- các màn hình nhỏ hơn 1 cột
+
+<img src=".." class="img-fluid/>
+
