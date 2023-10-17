@@ -1,0 +1,22 @@
+.nentrang {
+    width:60%;
+    margin: 0px auto;
+    background-image: url("/assets/images/hoanghon_baisao.jpg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+    color: #000000;
+}
+.tieude {
+    color: #9F81F7;
+    font-size: 30px;
+    text-align: center;
+
+}
+.chulon {
+    color:black;
+    font-size: 50px;
+    float:left;
+    margin-top: -8px;
+}
