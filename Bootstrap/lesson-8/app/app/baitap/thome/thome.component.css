@@ -1,0 +1,30 @@
+h1 {
+    color: #FF00FF;
+    background-color: #F5A9F2;
+    text-align: center;
+    padding: 10px;
+}
+
+.dd1 {
+    text-align:center;
+    color:blue;
+    font-style: italic;
+}
+
+.dd2 {
+    text-align:center;
+    color: #996600;
+    font-style: italic;
+}
+
+.dd3 {
+    text-align:center;
+    color: #006600;
+    font-style: italic;
+
+}
+
+.style01 {
+    background-color: #F2F5A9;
+    padding:10px
+}

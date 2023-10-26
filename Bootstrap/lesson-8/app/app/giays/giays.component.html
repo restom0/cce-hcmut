@@ -1,0 +1,10 @@
+<div class="row">
+    <div class="col-md-3 mb-2" *ngFor="let gi of giays">
+        <div class="card h-100">
+            <img src="/assets/images/{{gi.hinh}}" class="card-img-top" alt="{{gi.hinh}}" height="200">
+            <div class="card-body">
+            <p class="card-text">{{gi.tengiay}} - <del>{{gi.giagoc}}</del> - {{gi.giakm}}</p>
+            </div>
+        </div>
+    </div>
+</div>
