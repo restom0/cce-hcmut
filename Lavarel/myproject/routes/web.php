@@ -148,3 +148,56 @@ Route::group(['prefix' => 'Buoi09'], function () {
     Route::get("gioithieu", [Pagecontroller::class, "get_gioithieu"])->name("getgioithieu");
     Route::post("timkiem", [Pagecontroller::class, "post_timkiem"])->name("timkiem");
 });
+Route::group(['prefix' => 'admin', 'middleware' => 'AdminLogin'], function () {
+    // Theloai group
+    Route::group(['prefix' => 'theloai'], function () {
+        Route::get('danhsach', [TheloaiController::class, "danhsach"])->name("danhsachtl");
+        Route::get('sua', [TheloaiController::class, "sua"])->name("suatl");
+        Route::get('them', [TheloaiController::class, "them"])->name("themtl");
+        Route::get('them', [TheloaiController::class, "xulythem"])->name("xulythemtl");
+        Route::get('sua/{id}', [TheloaiController::class, 'sua'])->name("suatl");
+        Route::post('sua/{id}', [TheloaiController::class, 'xulysua'])->name('xulysuatl');
+        Route::get('xoa/{id}', [TheloaiController::class, 'xulyxoa'])->name('xulyxoatl');
+    });
+
+    Route::group(['prefix' => 'loaitin'], function () {
+        Route::get('danhsach', [Loaitinontroller::class, "danhsach"])->name("danhsachlt");
+        Route::get('sua', [LoaitinController::class, "sua"])->name("sualt");
+        Route::get('them', [LoaitinController::class, "them"])->name("themtl");
+    });
+    Route::group(['prefix' => 'tintuc'], function () {
+        Route::get('danhsach', [TintucController::class, "danhsach"])->name("danhsachtt");
+
+        Route::get('them', [TintucController::class, "them"])->name("themtt");
+        Route::post('them', [TintucController::class, "xulythem"])->name("xulythemtt");
+
+        Route::get('sua/{id}', [TintucController::class, "sua"])->name("suatt");
+        Route::post('sua/{id}', [TintucController::class, "xulysua"])->name("xulysuatt");
+
+        Route::get('xoa/{id}', [TintucController::class, "xulyxoa"])->name("xulyxoatt");
+    });
+    Route::group(['prefix' => 'ajax'], function () {
+        Route::get('loaitin/{idTheLoai)', 'AjaxController@getLoaiTin');
+    });
+    Route::group(['prefix' => 'user'], function () {
+        Route::get('danhsach', [UserController::class, 'get_danhsach_usr'])->name('danhsach_usr');
+        Route::get('sua/{id}', [UserController::class, 'get_suads_usr'])->name('sua_ds_usr');
+        Route::post('sua', [UserController::class, 'post_suads_usr'])->name('sua_ds_usr');
+        Route::get('them', [UserController::class, 'get_themds_usr'])->name('them_ds_usr');
+        Route::post('them', [UserController::class, 'post_themds_usr'])->name('them_ds_usr');
+        Route::get('xoa/{id}', [UserController::class, 'xoa_usr'])->name('xoa_usr');
+    });
+    Route::group(['prefix' => 'slide'], function () {
+        Route::get('danhsach', [SildeController::class, 'get_danhsach_sl'])->name('danhsach_sl');
+        Route::get('sua/{id}', [SildeController::class, 'get_suads_sl'])->name('sua_ds_sl');
+        Route::post('sua/{id}', [SildeController::class, 'post_suads_sl'])->name('sua_ds_sl');
+        Route::get('them', [SildeController::class, 'get_themds_sl'])->name('them_ds_sl');
+        Route::post('them', [SildeController::class, 'post_themds_sl'])->name('them_ds_sl');
+        Route::get('xoa/{id}', [SildeController::class, 'xoa_sl'])->name('xoa_sl');
+    });
+});
+Route::get('login', [AdminController::class, 'getLogin'])->name('login');
+Route::post('login', [AdminController::class, 'postLogin'])->name('login');
+Route::get('logout', [AdminController::class, 'getLogout'])->name('logout');
+Route::get('profileUser', [AdminController::class, 'getProfileUser'])->name('profile');
+Route::get('dashboard', [AdminController::class, 'getDashboard'])->name('dashboard');
