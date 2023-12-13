@@ -26,3 +26,9 @@ Route::get("/them-vao-gio-hang/{id}", [Pagecontroller::class, "getThemgiohang"])
 Route::get("/xoa-gio-hang/{id}", [Pagecontroller::class, "getXoagiohang"]);
 Route::get("/dat-hang", [Pagecontroller::class, "getDathang"]);
 Route::post("/dat-hang", [Pagecontroller::class, "postDathang"]);
+Route::get("/dang-nhap", [Pagecontroller::class, "getDangNhap"]);
+Route::get("/dang-ky", [Pagecontroller::class, "getDangKy"]);
+Route::post("/dang-nhap", [Pagecontroller::class, "postDangnhap"]);
+Route::get("/dang-xuat", [Pagecontroller::class, "getDangXuat"]);
+Route::post("/dang-ky", [Pagecontroller::class, "postDangKy"]);
+Route::get("/tim-kiem", [Pagecontroller::class, "getTimKiem"]);

@@ -9,7 +9,10 @@ use App\Models\Customer;
 use App\Models\Product;
 use App\Models\ProductType;
 use App\Models\Slide;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 
 class PageController extends Controller
@@ -130,5 +133,98 @@ class PageController extends Controller
         Session::forget('cart');
 
         return view('page.thongbao');
+    }
+    public function getDangNhap()
+    {
+        return view("page.dangnhap");
+    }
+    public function getDangKy()
+    {
+        return view("page.dangky");
+    }
+    public function postDangky(Request $req)
+    {
+        $validate = $req->validate(
+            [
+                'email' => 'required|email|unique:users',
+                'password' => 'required|min:6|max:20',
+                'repassword' => 'required|same:password',
+                'address' => 'required',
+                'fullname' => 'required'
+            ],
+            [
+                'email.required' => 'Vui lòng nhập địa chỉ thư',
+                'email.email' => 'địa chỉ thư không đúng định dạng',
+                'email.unique' => 'Email này đã có người đăng ký',
+                'password.required' => 'Chưa nhập mật khẩu',
+                'password.min' => 'Mật khẩu tối thiểu 6 ký tự',
+                'password.max' => 'Mật khẩu tối đa 20 ký tự',
+                'repassword.same' => 'Mật khẩu không giống nhau',
+                'repassword.required' => 'Chưa nhập lại mật khẩu',
+                'address.required' => 'Chưa nhập địa chỉ',
+                'fullname.required' => 'Chưa nhập họ và tên'
+            ]
+        );
+
+        $user = new User;
+
+        $user->full_name = $req->fullname;
+
+        $user->email = $req->email;
+
+        $user->password = Hash::make($req->password);
+
+        $user->phone = $req->phone;
+
+        $user->address = $req->address;
+
+        $user->save();
+
+        return redirect()->back()->with("thongbao", "Đăng ký thành công");
+    }
+    public function postDangnhap(Request $req)
+
+    {
+        $this->validate(
+            $req,
+
+            [
+                'email' => 'required|email',
+                'password' => 'required|min:6|max:20'
+
+            ],
+
+            [
+                'email.required' => "chưa nhập địa chỉ mail",
+
+                'email.email' => "Địa chỉ mail không đúng định dạng",
+
+                'password.required' => 'Chưa nhập mật khẩu',
+                'password.min' => 'mật khẩu tối thiểu 6 ký tự',
+
+                'password.max' => 'mật khẩu tối đa 20 ký tự'
+
+            ]
+
+        );
+        $chungthuc = array('email' => $req->email, 'password' => $req->password);
+
+        if (Auth::attempt($chungthuc)) {
+            return redirect("index");
+        } else {
+
+            return redirect()->back()->with(['matb' => '0', 'noidung' => 'Đăng nhập thất bại']);
+        }
+    }
+    public function getDangXuat()
+    {
+        Auth::logout();
+        return redirect("index");
+    }
+    public function getTimkiem(Request $req)
+    {
+        $product = Product::where("name", "like", "%" . $req . "%")->orWhere("unit_price", $req->key)->get();
+
+        return view("page.timkiem", compact("product"));
     }
 }

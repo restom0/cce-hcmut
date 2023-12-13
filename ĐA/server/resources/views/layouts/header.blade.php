@@ -9,9 +9,15 @@
             </div>
             <div class="pull-right auto-width-right">
                 <ul class="top-details menu-beta l-inline">
-                    <li><a href="#"><i class="fa fa-user"></i>Tài khoản</a></li>
-                    <li><a href="#">Đăng kí</a></li>
-                    <li><a href="#">Đăng nhập</a></li>
+                    @if (Auth::check())
+                        <li><a href="dang-xuat"><i class="fa fa-user">
+                                </i>{{ Auth::user()->full_name }}</a></li>
+
+                        <li><a href="dang-xuat">Đăng xuất</a></li>
+                    @else
+                        <li><a href="dang-ky">Đăng kí</a></li>
+                        <li><a href="dang-nhap">Đăng nhập</a></li>
+                    @endif
                 </ul>
             </div>
             <div class="clearfix"></div>
@@ -26,8 +32,8 @@
             <div class="pull-right beta-components space-left ov">
                 <div class="space10">&nbsp;</div>
                 <div class="beta-comp">
-                    <form role="search" method="get" id="searchform" action="/">
-                        <input type="text" value="" name="s" id="s"
+                    <form role="search" method="get" id="searchform" action="tim-kiem">
+                        <input type="text" value="" name="key" id="s"
                             placeholder="Nhập từ khóa..." />
                         <button class="fa fa-search" type="submit" id="searchsubmit"></button>
                     </form>
