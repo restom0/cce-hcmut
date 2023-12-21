@@ -9,13 +9,13 @@ class Product extends Model
 {
     use HasFactory;
     protected $table = "products";
-    public function product_type()
+    public function productType()
     {
-        return $this->belongsTo("App\ProductType", "id_type", "id");
+        return $this->belongsTo("App\Models\ProductType", "id_type", "id");
     }
 
     public function bill_detail()
     {
-        return $this->hasMany("App\Bill_detail", "id_product", "id");
+        return $this->hasMany("App\Models\Bill_detail", "id_product", "id");
     }
 }
