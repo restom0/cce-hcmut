@@ -1,0 +1,18 @@
+WordPress là gì?
+
+WordPress là một dạng phần mềm mã nguồn mở, dùng để tạo nên các website như thông tin doanh nghiệp,  tin tức, bán hàng… WordPress được viết bằng ngôn ngữ lập trình PHP và sử dụng MySQL database.
+
+Đặc điểm nổi bật của WordPress
+
+Cài đặt đơn giản và cực kì nhanh chóng.
+Rất nhiều Plugin và cập nhật liên tục, bạn cũng có thể tự viết plugin cho mình.
+Hỗ trợ nhiều ngôn ngữ ( cả tiếng Việt )
+Có nhiều Theme miễn phí, chuyên nghiệp
+SEO rất tốt.
+Dễ dàng quản lý bài viết giống .
+Tích hợp sẵn Latex – công cụ soạn thảo công thức toán học, bạn có thể viết công thức toán học ngay trong bài viết.
+Upload và quản lý hình ảnh dễ dàng,
+Widget đa dạng ( ứng dụng tạo thêm ) như Thống kê số người truy cập, Danh sách các bài viết mới, các bài viết nổi bật, được xem nhiều, được comment nhiều, Liệt kê các chuyên mục, Liệt kê các trang, Bài viết theo ngày tháng, ….
+Quản lý và duyệt Comment rất hay, có thể chặn spam theo IP.
+Hệ thống phân quyền với nhiều cấp độ khác nhau như: Administrator, Author, Editor, Contributer, Subcriber. Mỗi phân quyền sẽ có các quyền hạn khác nhau như được phép đăng bài viết, sửa bài viết, xóa bài viết, duyệt comment …
+Sao lưu dữ liệu dễ dàng .
