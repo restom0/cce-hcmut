@@ -1,0 +1,14 @@
+.nenbt02 {
+  margin: 50px 200px;
+  background-image: url("/assets/hinh/hoanghon_phuquoc.jpg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  background-color: #000;
+  background-attachment: fixed;
+  color: white;
+}
+
+p {
+  text-indent: 30px;
+}

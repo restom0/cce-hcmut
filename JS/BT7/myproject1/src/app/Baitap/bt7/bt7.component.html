@@ -1,0 +1,19 @@
+<h1 class="bg-dark text-white text-center">
+  Tin tức thể thao trong ngày
+</h1>
+<div class="container mt-3">
+  <div id="accordion">
+    <div class="card" *ngFor="let bv of baiviet">
+      <div class="card-header">
+        <a class="btn" data-bs-toggle="collapse" href="#{{bv.id}}">
+          {{bv.title}}
+        </a>
+      </div>
+      <div id="{{bv.id}}" class="collapse show" data-bs-parent="#accordion">
+        <div class="card-body">
+          {{bv.content}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
