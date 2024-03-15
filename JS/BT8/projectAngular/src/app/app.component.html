@@ -1,0 +1,18 @@
+<mat-toolbar>
+  <img class="mb-4 align-items-center justify-content-center" src="assets/img/logoweb.png" alt="logo website" width="40" height="40">
+  <span>Quản lý Bán Rubik</span>
+  <span class="example-spacer"></span>
+  <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon" routerLinkActive="/login">
+    <mat-icon>account_circle</mat-icon>
+  </button>
+</mat-toolbar>
+
+<mat-tab-group mat-align-tabs="center">
+<!--  <mat-tab label="Login">-->
+<!--    <app-login></app-login>-->
+<!--  </mat-tab>-->
+  <mat-tab label="Rubik"> <app-rubik></app-rubik> </mat-tab>
+  <mat-tab label="Posted"> <app-baiviet></app-baiviet> </mat-tab>
+</mat-tab-group>
+
+
