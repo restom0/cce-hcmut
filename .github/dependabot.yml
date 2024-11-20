@@ -7,3 +7,10 @@ updates:
     open-pull-requests-limit: 10
     ignore:
       - dependency-name: "php"  # Ignore specific dependencies if necessary
+  - package-ecosystem: "composer"
+    directory: "/ĐA/server"
+    schedule:
+      interval: "weekly"   # Options: daily, weekly, monthly
+    open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: "php"  # Ignore specific dependencies if necessary
