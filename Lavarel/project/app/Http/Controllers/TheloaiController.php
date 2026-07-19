@@ -20,7 +20,7 @@ class TheloaiController extends Controller
 
         $val = $req->validate([
 
-            'Ten' => 'required|min:3|max: 100 unique: Theloai, Ten'
+            'Ten' => 'required|min:3|max:100|unique:Theloai,Ten'
 
         ], [
 
@@ -28,13 +28,11 @@ class TheloaiController extends Controller
 
             'Ten.min' => 'Tên thể loại tối thiểu 3 ký tự',
 
-            'Ten.max' => 'Tên thể loại tối đa 100 ký tự',,
+            'Ten.max' => 'Tên thể loại tối đa 100 ký tự',
 
             'Ten.unique' => "Tên thể loại này đã tồn tại"
 
         ]);
-
-        return redirect("admin/theloai/them")->with("thongbao", "Thêm Thể loại thành công");
 
         $tl = new Theloai;
 
@@ -43,6 +41,8 @@ class TheloaiController extends Controller
         $tl->TenkhongDau = ChangeTitle($val["Ten"]);
 
         $tl->save();
+
+        return redirect("admin/theloai/them")->with("thongbao", "Thêm Thể loại thành công");
     }
     public function sua($id)
 
