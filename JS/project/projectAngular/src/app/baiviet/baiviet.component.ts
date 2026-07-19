@@ -1,13 +1,15 @@
-import {AfterViewInit, Component, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ViewChild, ChangeDetectionStrategy} from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatTableDataSource} from '@angular/material/table';
 import {SelectionModel} from "@angular/cdk/collections";
 import {MatDialog} from "@angular/material/dialog";
 
 @Component({
-  selector: 'app-baiviet',
-  templateUrl: './baiviet.component.html',
-  styleUrls: ['./baiviet.component.css']
+    selector: 'app-baiviet',
+    templateUrl: './baiviet.component.html',
+    styleUrls: ['./baiviet.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class BaivietComponent implements AfterViewInit {
 
@@ -58,9 +60,11 @@ export class BaivietComponent implements AfterViewInit {
 }
 
 @Component({
-  selector: 'add-new',
-  templateUrl: 'add-new.html',
-  styleUrls: ['add-new.css']
+    selector: 'add-new',
+    templateUrl: 'add-new.html',
+    styleUrls: ['add-new.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class AddNew {}
 

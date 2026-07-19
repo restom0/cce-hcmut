@@ -35,19 +35,19 @@ jobs:
             output: HTML+CSS/project
             project_id_secret: VERCEL_PROJECT_ID_HTML_CSS
 
-          # Angular 14 pins Node to ^14.15 || ^16.10; newer Node breaks the build.
+          # Angular 22 requires Node ^22.22.3 || ^24.15.0 || >=26.0.0.
           - name: project-angular
             dir: JS/project/projectAngular
-            node: '16'
+            node: '24'
             build: true
-            output: JS/project/projectAngular/dist/project-angular
+            output: JS/project/projectAngular/dist/project-angular/browser
             project_id_secret: VERCEL_PROJECT_ID_PROJECT_ANGULAR
 
-          # Angular 17 application builder with SSR configured. Deployed as a
-          # static site, so the browser bundle is what ships.
+          # Angular 22 with SSR configured. Deployed as a static site, so the
+          # browser bundle is what ships.
           - name: myproject1
             dir: JS/project/myproject1
-            node: '20'
+            node: '24'
             build: true
             output: JS/project/myproject1/dist/myproject1/browser
             project_id_secret: VERCEL_PROJECT_ID_MYPROJECT1

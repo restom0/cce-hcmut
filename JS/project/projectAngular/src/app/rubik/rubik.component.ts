@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ViewChild, ChangeDetectionStrategy} from '@angular/core';
 import {MatTableDataSource} from "@angular/material/table";
 import {SelectionModel} from "@angular/cdk/collections";
 import {MatPaginator} from "@angular/material/paginator";
@@ -6,9 +6,11 @@ import {MatDialog} from "@angular/material/dialog";
 import {AddNewComponent} from "./add-new/add-new.component";
 
 @Component({
-  selector: 'app-rubik',
-  templateUrl: './rubik.component.html',
-  styleUrls: ['./rubik.component.css']
+    selector: 'app-rubik',
+    templateUrl: './rubik.component.html',
+    styleUrls: ['./rubik.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class RubikComponent implements AfterViewInit {
 

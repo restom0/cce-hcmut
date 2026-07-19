@@ -4,7 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LoginComponent } from './login/login.component';
-import {RouterLinkActive, RouterLinkWithHref} from "@angular/router";
+import {RouterLinkActive, RouterLink} from "@angular/router";
 import {MatIconModule} from '@angular/material/icon';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatTabsModule} from '@angular/material/tabs';
@@ -36,7 +36,7 @@ import {ReactiveFormsModule} from "@angular/forms";
     MatIconModule,
     MatToolbarModule,
     MatTabsModule,
-    RouterLinkWithHref,
+    RouterLink,
     MatButtonModule,
     MatTableModule,
     MatPaginatorModule,
