@@ -5,3 +5,35 @@
 Thumbs.db
 .DS_Store
 desktop.ini
+
+# Dependencies — never commit these; they are restored by npm ci / composer install.
+# bower_components/ is deliberately NOT listed: those files are committed, are
+# referenced at runtime by the Laravel admin layouts, and there is no bower.json
+# to restore them from.
+node_modules/
+vendor/
+
+# Build output. Scoped to the Angular projects on purpose — a bare "dist/" would
+# also match the committed SB Admin 2 theme under */public/backend/dist/.
+JS/project/projectAngular/dist/
+JS/project/myproject1/dist/
+.angular/
+
+# Deploy / analysis tooling
+.vercel/
+.scannerwork/
+
+# Laravel runtime state
+.env
+.env.*.local
+!.env.example
+**/storage/framework/cache/data/*
+**/storage/framework/sessions/*
+**/storage/framework/views/*
+**/storage/logs/*.log
+**/bootstrap/cache/*.php
+
+# Misc
+npm-debug.log*
+yarn-error.log
+*.cache
