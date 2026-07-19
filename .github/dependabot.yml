@@ -15,18 +15,40 @@ updates:
     ignore:
       - dependency-name: "php"  # Ignore specific dependencies if necessary
 
-  # The two Angular apps are built in CI now, so their lockfiles are worth
-  # tracking too. project-angular stays on Angular 14, which pins Node 16.
+  # Both Angular apps are on 22 and are built in CI, so their lockfiles are
+  # worth tracking. The ignores below are not general caution: each one
+  # corresponds to a bump that provably breaks the build.
   - package-ecosystem: "npm"
     directory: "/JS/project/projectAngular"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5
+    ignore:
+      # @angular/build@22 peer-requires typescript ">=6.0 <6.1". PR #66 bumped
+      # it to 7.0.2 and npm ci stopped resolving entirely. Angular decides this
+      # version, so let ng update move it when the next major lands.
+      - dependency-name: "typescript"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+
   - package-ecosystem: "npm"
     directory: "/JS/project/myproject1"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5
+    ignore:
+      - dependency-name: "typescript"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+      # server.ts registers server.get('*.*') and server.get('*'). Express 5
+      # switched to path-to-regexp 8, which rejects bare '*' wildcards and
+      # throws at startup. Moving to 5 means rewriting those routes first.
+      - dependency-name: "express"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/express"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "github-actions"
     directory: "/"

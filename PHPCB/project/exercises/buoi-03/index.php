@@ -1,5 +1,6 @@
 <?php
-$x = $y = '';
+$x = $y = $z = '';
+$kq = '';
 if (isset($_POST["a"])) {
     $x = $_POST["a"];
 }
@@ -9,21 +10,21 @@ if (isset($_POST["b"])) {
 if (isset($_POST["c"])) {
     $z = $_POST["c"];
 }
-switch($z):{
-    case "plus":{
-        (int)$kq = $x + $y;
+switch ($z) {
+    case "plus":
+        $kq = (int)($x + $y);
         break;
-    }
-    case "minus":{
-        (int)$kq = $x - $y;
+    case "minus":
+        $kq = (int)($x - $y);
         break;
-    }
-    case "product":{
-        (int)$kq = $x * $y;
+    case "product":
+        $kq = (int)($x * $y);
         break;
-    }
-    default:
-    (int)$kq = $x / $y;
+    case "divide":
+        // Guarded: the form can submit b=0, and on first load $z was empty
+        // and fell through to the old default branch, dividing by nothing.
+        $kq = ((int)$y === 0) ? 'Không chia được cho 0' : (int)($x / $y);
+        break;
 }
 ?>
 <!DOCTYPE html>

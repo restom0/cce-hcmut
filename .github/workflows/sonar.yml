@@ -29,8 +29,9 @@ jobs:
             echo "configured=true" >> "$GITHUB_OUTPUT"
           fi
 
+      # v5 is affected by an argument-injection advisory (Dependabot #385).
       - name: SonarCloud scan
         if: steps.creds.outputs.configured == 'true'
-        uses: SonarSource/sonarqube-scan-action@v5
+        uses: SonarSource/sonarqube-scan-action@v8.2.1
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
