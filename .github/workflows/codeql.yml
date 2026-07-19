@@ -1,0 +1,47 @@
+name: CodeQL
+
+# Advanced setup, used instead of GitHub's default setup so that the vendored
+# third-party trees can be excluded via .github/codeql/codeql-config.yml.
+# Default setup must be turned off for this workflow to be accepted:
+# Settings -> Code security -> CodeQL analysis -> Advanced.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Keeps results fresh for advisories published between pushes.
+    - cron: '31 4 * * 1'
+
+jobs:
+  analyze:
+    name: Analyze ${{ matrix.language }}
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      packages: read
+      actions: read
+      contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # javascript-typescript covers the Angular apps and the front-end
+        # assets. There is no CodeQL analyser for PHP, so the Laravel and plain
+        # PHP code is covered by package-projects.yml's lint and by SonarCloud.
+        language: [javascript-typescript]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          config-file: ./.github/codeql/codeql-config.yml
+
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"

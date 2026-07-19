@@ -1,0 +1,35 @@
+name: "cce-hcmut CodeQL config"
+
+# Every CodeQL alert raised against this repo so far has been inside a vendored
+# third-party library, not code written for these courses. Patching minified
+# upstream files would diverge from upstream and be lost the next time a library
+# is re-downloaded, so the vendored trees are excluded from analysis instead.
+#
+# Each entry below corresponds to libraries that actually produced alerts.
+paths-ignore:
+  # Slider and admin-template bundles shipped with the ĐA front-end template:
+  # rs-plugin (Revolution Slider), jquery.nivo.slider, bxslider.
+  - '**/assets/dest/**'
+  - '**/Template/source/**'
+
+  # CKEditor, bundled into both Laravel apps (plugins/wsc/dialogs/ciframe.html).
+  - '**/ckeditor/**'
+
+  # pluto-1.0.0 admin theme: bootstrap, bootstrap-select, Chart.bundle,
+  # owl.carousel. Used by PHPCB and JS.
+  - '**/pluto-1.0.0/**'
+
+  # WordPress assignment tree: Polylang plus downloaded themes and plugins.
+  - '**/homework/**'
+
+  # Front-end template kept alongside the Laravel Buoi08 exercise.
+  - '**/GiaoDien_Front/**'
+  - '**/Template_BootStrap/**'
+
+  # Standard dependency and build directories.
+  - '**/bower_components/**'
+  - '**/node_modules/**'
+  - '**/vendor/**'
+  - '**/dist/**'
+  - '**/*.min.js'
+  - '**/*.min.css'
