@@ -12,7 +12,7 @@ jobs:
     name: Quality scan
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           # Shallow clones stop Sonar attributing issues to the right commit.
           fetch-depth: 0

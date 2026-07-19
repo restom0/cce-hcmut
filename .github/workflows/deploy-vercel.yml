@@ -53,7 +53,7 @@ jobs:
             project_id_secret: VERCEL_PROJECT_ID_MYPROJECT1
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # Fail loudly but early if the deploy has never been configured, rather
       # than after a full Angular build.
