@@ -1,11 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
-  selector: 'app-bt9',
-  standalone: true,
-  imports: [],
-  templateUrl: './bt9.component.html',
-  styleUrl: './bt9.component.css'
+    selector: 'app-bt9',
+    imports: [],
+    templateUrl: './bt9.component.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    styleUrl: './bt9.component.css'
 })
 export class Bt9Component {
 

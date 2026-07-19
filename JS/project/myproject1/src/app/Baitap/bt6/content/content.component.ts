@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 interface cards {
   img: string;
@@ -6,9 +6,11 @@ interface cards {
 }
 
 @Component({
-  selector: 'app-content',
-  templateUrl: './content.component.html',
-  styleUrls: ['./content.component.css']
+    selector: 'app-content',
+    templateUrl: './content.component.html',
+    styleUrls: ['./content.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class ContentComponent implements OnInit {
   public img1: string = 'assets/paris.jpg'

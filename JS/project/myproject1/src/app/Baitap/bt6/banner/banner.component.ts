@@ -1,11 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 
 
 @Component({
-  selector: 'app-banner',
-  templateUrl: './banner.component.html',
-  styleUrls: ['./banner.component.css']
+    selector: 'app-banner',
+    templateUrl: './banner.component.html',
+    styleUrls: ['./banner.component.css'],
+    changeDetection: ChangeDetectionStrategy.Eager,
+    standalone: false
 })
 export class BannerComponent implements OnInit {
   public img1: string = 'assets/paris.jpg'
