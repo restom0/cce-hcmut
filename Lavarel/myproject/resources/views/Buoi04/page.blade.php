@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('Buoi04.layouts.master')
 @section('title', 'Đây là title của trang')
 @section('sidebar')
     @parent

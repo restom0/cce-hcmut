@@ -1,4 +1,4 @@
-@extends('admin.Layout.master')
+@extends('admin.layout.master')
 @section('content')
     <div id="page-wrapper">
         <div class="container-fluid">
@@ -17,7 +17,7 @@
                             @endforeach
                         </div>
                     @endif
-                    <form action="{{ route('sua_ds_usr') }}" method="POST">
+                    <form action="{{ route('xulysua_usr') }}" method="POST">
                         @csrf
                         <div class="form-group">
                             <label for="username">ID User:</label>

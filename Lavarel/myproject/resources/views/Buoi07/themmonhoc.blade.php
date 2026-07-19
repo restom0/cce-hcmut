@@ -1,4 +1,4 @@
-@extends('buoi07.master')
+@extends('Buoi07.master')
 @section('noidung')
     <div class="h2 alert alert-info text-center">Thêm môn học mới</div>
     @if ($errors->any())

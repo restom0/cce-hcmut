@@ -2,12 +2,20 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Buoi03Controller;
 use App\Http\Controllers\Buoi04Controller;
-use App\Http\Controllers\Buoi05Controller;
 use App\Http\Controllers\Buoi06Controller;
-use App\Http\Controllers\mycontroller;
 use App\Http\Controllers\Buoi07Controller;
+use App\Http\Controllers\LoaitinController;
+use App\Http\Controllers\LophocController;
+use App\Http\Controllers\MonhocController;
+use App\Http\Controllers\PageController;
+use App\Http\Controllers\SlideController;
+use App\Http\Controllers\TheloaiController;
+use App\Http\Controllers\TintucController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\mycontroller;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -98,10 +106,12 @@ Route::group(['prefix' => 'Buoi04'], function () {
     Route::get("/", [Buoi04Controller::class, "xemtruyen"])->name("index");
 });
 
-Route::group(['prefix' => 'Buoi05'], function () {
-    Route::get('lietkemonhoc', [Buoi05Controller::class, "getDanhSachMonHoc"]);
-    Route::get('danhsachmonhoc', [Buoi05Controller::class, "LietKeMonHoc"]);
-});
+// Buoi05Controller does not exist in app/Http/Controllers; these routes
+// fataled on dispatch. Re-enable once the controller is written.
+// Route::group(['prefix' => 'Buoi05'], function () {
+//     Route::get('lietkemonhoc', [Buoi05Controller::class, "getDanhSachMonHoc"]);
+//     Route::get('danhsachmonhoc', [Buoi05Controller::class, "LietKeMonHoc"]);
+// });
 
 Route::group(['prefix' => 'Buoi06'], function () {
     Route::get('lietke1', [Buoi06Controller::class, "TruyVan1"])->name("lietke1");
@@ -117,12 +127,12 @@ Route::group(['prefix' => 'Buoi06'], function () {
 Route::group(['prefix' => "Buoi07"], function () {
     Route::get("/lienketdsmh", [mycontroller::class, "display_all_subjects"]);
     Route::group(["prefix" => "monhoc"], function () {
-        Route::get("lietkemonhoc", [baitapcontroller::class, "get_lkmonhoc"])->name("lkmh");
-        Route::get("themmonhoc", [baitapcontroller::class, "get_themmonhoc"])->name("thmh");
-        Route::post("themmonhoc", [baitapcontroller::class, "post_themmonhoc"])->name("ltmh");
-        Route::get("suamonhoc/{mamh}", [baitapcontroller::class, "get_suamonhoc1"])->name("suamh1");
-        Route::post("suamonhoc/{mamh}", [baitapcontroller::class, "post_suamonhoc"])->name('cnmh');
-        Route::get("xoamonhoc/{mamh}", [baitapcontroller::class, "get_xoamonhoc"])->name("xoamh");
+        Route::get("lietkemonhoc", [Buoi07Controller::class, "get_lkmonhoc"])->name("lkmh");
+        Route::get("themmonhoc", [Buoi07Controller::class, "get_themmonhoc"])->name("thmh");
+        Route::post("themmonhoc", [Buoi07Controller::class, "post_themmonhoc"])->name("ltmh");
+        Route::get("suamonhoc/{mamh}", [Buoi07Controller::class, "get_suamonhoc"])->name("suamh1");
+        Route::post("suamonhoc/{mamh}", [Buoi07Controller::class, "post_suamonhoc"])->name('cnmh');
+        Route::get("xoamonhoc/{mamh}", [Buoi07Controller::class, "get_xoamonhoc"])->name("xoamh");
     });
 });
 Route::group(['prefix' => 'Buoi08'], function () {
@@ -131,39 +141,38 @@ Route::group(['prefix' => 'Buoi08'], function () {
 });
 Route::group(['prefix' => 'Buoi09'], function () {
     Route::group(["prefix" => "front"], function () {
-        Route::get("trangchu", [Pagecontroller::class, "get_trangchul"]);
-        Route::get("lienhe", [Pagecontroller::class, "get_lienhe"]);
-        Route::get("loaitin/{id}/{TenKhongDau}.html", [Pagecontroller::class, "get_loaitin"])->name("loaitin");
-        //Route::getrloaitin/{id}/{TenKhongDau}.html",[Pagecontroller::class,"get_loaitin1)->name("loaitin");
-        Route::get("tintuc/{id}/{TieuDeKhongDau}.html", [Pagecontroller::class, "get_tintucl"])->name("tintuc");
-        Route::post("comment/{id}", [Pagecontroller::class, "post_comment"])->name('xylucomment');
+        Route::get("trangchu", [PageController::class, "get_trangchul"]);
+        Route::get("lienhe", [PageController::class, "get_lienhe"]);
+        Route::get("loaitin/{id}/{TenKhongDau}.html", [PageController::class, "get_loaitin"])->name("loaitin");
+        //Route::getrloaitin/{id}/{TenKhongDau}.html",[PageController::class,"get_loaitin1)->name("loaitin");
+        Route::get("tintuc/{id}/{TieuDeKhongDau}.html", [PageController::class, "get_tintucl"])->name("tintuc");
+        Route::post("comment/{id}", [PageController::class, "post_comment"])->name('xylucomment');
     });
-    Route::get("dangnhap", [Pagecontroller::class, "get_dangnhap"])->name("dangnhap");
-    Route::post("dangnhap", [Pagecontroller::class, "post_dangnhap1"])->name("dangnhap");
-    Route::get("dangxuat", [Pagecontroller::class, "get_dangxuat1"])->name("dangxuat");
+    Route::get("dangnhap", [PageController::class, "get_dangnhap"])->name("dangnhap");
+    Route::post("dangnhap", [PageController::class, "post_dangnhap1"])->name("dangnhap");
+    Route::get("dangxuat", [PageController::class, "get_dangxuat1"])->name("dangxuat");
     Route::get("nguoidung", [PageController::class, "nguoidung"])->name("nguoidung");
     Route::post("nguoidung", [PageController::class, "xulynguoidung"])->name("xulynguoidung");
-    Route::get("dangky", [pagecontroller::class, "get_dangky"])->name("dangky");
-    Route::post("dangky", [pagecontroller::class, "post_dangky"])->name("xulydangky");
-    Route::get("gioithieu", [Pagecontroller::class, "get_gioithieu"])->name("getgioithieu");
-    Route::post("timkiem", [Pagecontroller::class, "post_timkiem"])->name("timkiem");
+    Route::get("dangky", [PageController::class, "get_dangky"])->name("dangky");
+    Route::post("dangky", [PageController::class, "post_dangky"])->name("xulydangky");
+    Route::get("gioithieu", [PageController::class, "get_gioithieu"])->name("getgioithieu");
+    Route::post("timkiem", [PageController::class, "post_timkiem"])->name("timkiem");
 });
 Route::group(['prefix' => 'admin', 'middleware' => 'AdminLogin'], function () {
     // Theloai group
     Route::group(['prefix' => 'theloai'], function () {
         Route::get('danhsach', [TheloaiController::class, "danhsach"])->name("danhsachtl");
-        Route::get('sua', [TheloaiController::class, "sua"])->name("suatl");
         Route::get('them', [TheloaiController::class, "them"])->name("themtl");
-        Route::get('them', [TheloaiController::class, "xulythem"])->name("xulythemtl");
+        Route::post('them', [TheloaiController::class, "xulythem"])->name("xulythemtl");
         Route::get('sua/{id}', [TheloaiController::class, 'sua'])->name("suatl");
         Route::post('sua/{id}', [TheloaiController::class, 'xulysua'])->name('xulysuatl');
         Route::get('xoa/{id}', [TheloaiController::class, 'xulyxoa'])->name('xulyxoatl');
     });
 
     Route::group(['prefix' => 'loaitin'], function () {
-        Route::get('danhsach', [Loaitinontroller::class, "danhsach"])->name("danhsachlt");
+        Route::get('danhsach', [LoaitinController::class, "danhsach"])->name("danhsachlt");
         Route::get('sua', [LoaitinController::class, "sua"])->name("sualt");
-        Route::get('them', [LoaitinController::class, "them"])->name("themtl");
+        Route::get('them', [LoaitinController::class, "them"])->name("themlt");
     });
     Route::group(['prefix' => 'tintuc'], function () {
         Route::get('danhsach', [TintucController::class, "danhsach"])->name("danhsachtt");
@@ -176,24 +185,26 @@ Route::group(['prefix' => 'admin', 'middleware' => 'AdminLogin'], function () {
 
         Route::get('xoa/{id}', [TintucController::class, "xulyxoa"])->name("xulyxoatt");
     });
-    Route::group(['prefix' => 'ajax'], function () {
-        Route::get('loaitin/{idTheLoai)', 'AjaxController@getLoaiTin');
-    });
+// AjaxController does not exist in app/Http/Controllers, and the parameter
+    // was written {idTheLoai) with a closing paren.
+    // Route::group(['prefix' => 'ajax'], function () {
+    //     Route::get('loaitin/{idTheLoai}', [AjaxController::class, 'getLoaiTin']);
+    // });
     Route::group(['prefix' => 'user'], function () {
         Route::get('danhsach', [UserController::class, 'get_danhsach_usr'])->name('danhsach_usr');
         Route::get('sua/{id}', [UserController::class, 'get_suads_usr'])->name('sua_ds_usr');
-        Route::post('sua', [UserController::class, 'post_suads_usr'])->name('sua_ds_usr');
+        Route::post('sua', [UserController::class, 'post_suads_usr'])->name('xulysua_usr');
         Route::get('them', [UserController::class, 'get_themds_usr'])->name('them_ds_usr');
         Route::post('them', [UserController::class, 'post_themds_usr'])->name('them_ds_usr');
         Route::get('xoa/{id}', [UserController::class, 'xoa_usr'])->name('xoa_usr');
     });
     Route::group(['prefix' => 'slide'], function () {
-        Route::get('danhsach', [SildeController::class, 'get_danhsach_sl'])->name('danhsach_sl');
-        Route::get('sua/{id}', [SildeController::class, 'get_suads_sl'])->name('sua_ds_sl');
-        Route::post('sua/{id}', [SildeController::class, 'post_suads_sl'])->name('sua_ds_sl');
-        Route::get('them', [SildeController::class, 'get_themds_sl'])->name('them_ds_sl');
-        Route::post('them', [SildeController::class, 'post_themds_sl'])->name('them_ds_sl');
-        Route::get('xoa/{id}', [SildeController::class, 'xoa_sl'])->name('xoa_sl');
+        Route::get('danhsach', [SlideController::class, 'get_danhsach_sl'])->name('danhsach_sl');
+        Route::get('sua/{id}', [SlideController::class, 'get_suads_sl'])->name('sua_ds_sl');
+        Route::post('sua/{id}', [SlideController::class, 'post_suads_sl'])->name('sua_ds_sl');
+        Route::get('them', [SlideController::class, 'get_themds_sl'])->name('them_ds_sl');
+        Route::post('them', [SlideController::class, 'post_themds_sl'])->name('them_ds_sl');
+        Route::get('xoa/{id}', [SlideController::class, 'xoa_sl'])->name('xoa_sl');
     });
 });
 Route::get('login', [AdminController::class, 'getLogin'])->name('login');

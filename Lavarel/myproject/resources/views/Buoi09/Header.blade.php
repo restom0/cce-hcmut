@@ -16,7 +16,7 @@
         <a href="{{ route('dangnhap') }}">Đăng nhập</a>
     </li>
 @endif
-<form class="navbar-form navbar-left" role="search" action="{{ route('timkiem') }}" method="post`">
+<form class="navbar-form navbar-left" role="search" action="{{ route('timkiem') }}" method="post">
     @csrf
     <div class="form-group">
         <input type="text" class="form-control" placeholder="nhập từ khóa" name="tukhoa">

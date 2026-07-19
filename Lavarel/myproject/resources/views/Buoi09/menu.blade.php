@@ -5,7 +5,7 @@
             @foreach ($tl->loaitin as $lt)
                 <li class="list-group-itee">
                     {{-- <a href="front/loaitin/{{$lt->id}1/{{$1t->TenKhongDau}l.html">{{ $lt->Ten}}</a> --}}
-                    <a href="{{ route('loaitin', [$lt->id, $lt->TenKhongDau]) }}">{{ $tt->Ten }}</a>
+                    <a href="{{ route('loaitin', [$lt->id, $lt->TenKhongDau]) }}">{{ $lt->Ten }}</a>
                 </li>
             @endforeach
         </ul>

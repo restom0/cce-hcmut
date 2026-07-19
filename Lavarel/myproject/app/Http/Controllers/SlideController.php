@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Slide;
 
-class SildeController extends Controller
+class SlideController extends Controller
 {
     function get_danhsach_sl()
     {
