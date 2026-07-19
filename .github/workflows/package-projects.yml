@@ -39,7 +39,7 @@ jobs:
             composer: false
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: shivammathur/setup-php@v2
         with:
@@ -95,7 +95,7 @@ jobs:
             -x '*.rar'
           ls -lh "_packages/${{ matrix.name }}.zip"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: ${{ matrix.name }}-package
           path: _packages/${{ matrix.name }}.zip
