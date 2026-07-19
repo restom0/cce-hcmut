@@ -104,6 +104,6 @@ jobs:
       # Tagging the repo publishes the same archives as release downloads.
       - name: Attach to release
         if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: _packages/${{ matrix.name }}.zip
