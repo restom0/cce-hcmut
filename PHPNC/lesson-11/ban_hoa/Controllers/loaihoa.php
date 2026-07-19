@@ -1,6 +1,6 @@
 <?php
 //nạp model để có các hàm tương tác db
-require_once "models/model_loaihoa.php";
+require_once "Models/model_loaihoa.php";
 class loaihoa
 {
     private $model = null;
@@ -41,14 +41,14 @@ class loaihoa
         $page_title = "Danh sách Loại hoa";
         $page_loai = "Views/listloai_layout2.php";
         $page_files = "Views/loaihoa/list.php";
-        require_once("layout2.php");
+        require_once("Layout2.php");
     }
     function addnew()
     {
         $page_title = "Thêm Hãng Sữa";
         $page_loai = "Views/listloai_layout2.php";
         $page_files = "Views/loaihoa/addnew.php";
-        require_once("layout2.php");
+        require_once("Layout2.php");
     }
 
     function store()
@@ -73,7 +73,7 @@ class loaihoa
         $page_title = "Cập nhật Hãng Hoa";
         $page_loai = "Views/listloai_layout2.php";
         $page_files = "Views/loaihoa/edit.php";
-        require_once("layout2.php");
+        require_once("Layout2.php");
     }
     function update()
     {

@@ -61,7 +61,7 @@ class hangsua
             $_SESSION["thongbao"] = "Thêm hãng thành công!!";
         }
         if ($kq) {
-            header("location: " . ROOT_URL . "/?ctr=hangsua");
+            header("location: " . ROOT_URL . "/?ctrl=hangsua");
         }
     }
     function edit()
@@ -85,7 +85,7 @@ class hangsua
         } else {
             $_SESSION["thongbao"] = "Cập nhật thất bại";
         }
-        header("location: " . ROOT_URL . "/?ctr=hangsua");
+        header("location: " . ROOT_URL . "/?ctrl=hangsua");
     }
     function delete()
     {
@@ -102,6 +102,6 @@ class hangsua
             else
                 $_SESSION["thongbao"] = "Đã xoá hãng sữa THẤT BẠI !!";
         }
-        header("location: " . ROOT_URL . "/?ctr=hangsua");
+        header("location: " . ROOT_URL . "/?ctrl=hangsua");
     }
 }

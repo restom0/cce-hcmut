@@ -1,6 +1,6 @@
 <?php
 //nạp model để có các hàm tương tác db
-require_once "models/model_donhang.php";
+require_once "Models/model_donhang.php";
 class donhang
 {
     private $model = null;
@@ -28,7 +28,7 @@ class donhang
         $page_title = "";
         $page_loai = "Views/listloai_layout2.php";
         $page_files = "Views/donhang/list.php";
-        require_once("layout2.php");
+        require_once("Layout2.php");
     }
 
     function detail()
@@ -38,6 +38,6 @@ class donhang
         $page_title = "";
         $page_loai = "Views/listloai_layout2.php";
         $page_files = "Views/donhang/detail.php";
-        require_once("layout2.php");
+        require_once("Layout2.php");
     }
 }

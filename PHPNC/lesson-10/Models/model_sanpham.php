@@ -1,5 +1,5 @@
 <?php
-    require_once 'system/model_system.php';
+    require_once 'System/Model_system.php';
     class model_sanpham extends model_system
     {
         function listrecords()

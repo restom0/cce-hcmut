@@ -1,6 +1,6 @@
 <?php
 //nạp model để có các hàm tương tác db
-require_once "models/model_trangchu.php";
+require_once "Models/model_trangchu.php";
 class trangchu
 {
     private $model = null;

@@ -1,6 +1,6 @@
 <?php
 //nạp model để có các hàm tương tác db
-require_once "models/model_sanpham.php";
+require_once "Models/model_sanpham.php";
 class sanpham
 {
     private $model = null;

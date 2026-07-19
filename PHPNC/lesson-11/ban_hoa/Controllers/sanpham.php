@@ -1,6 +1,6 @@
 <?php
 //nạp model để có các hàm tương tác db
-require_once "models/model_sanpham.php";
+require_once "Models/model_sanpham.php";
 class sanpham
 {
     private $model = null;
@@ -33,7 +33,7 @@ class sanpham
         $list_loai = $this->model->listrecords_loai();
         $page_loai = "Views/listloai_layout2.php";
         $page_files = "Views/listproduct_layout2.php";
-        require_once("layout2.php");
+        require_once("Layout2.php");
     }
     function ProductDetail()
     {
@@ -41,7 +41,7 @@ class sanpham
         $row = $this->model->detailrecord($ma);
         $page_loai = "Views/listloai_layout2.php";
         $page_files = "views/detail.php";
-        require_once("layout2.php");
+        require_once("Layout2.php");
     }
     function ProductType()
     {
@@ -50,7 +50,7 @@ class sanpham
         $list_loai = $this->model->listrecords_loai();
         $page_loai = "Views/listloai_layout2.php";
         $page_files = "Views/listproduct_layout2.php";
-        require_once("layout2.php");
+        require_once("Layout2.php");
     }
     function ProductList1()
     {
@@ -67,7 +67,7 @@ class sanpham
         $listloai = $this->model->listrecords_loai();
         $page_loai = "Views/listloai.php";
         $page_files = "Views/listproduct2.php";
-        require_once("layout2.php");
+        require_once("Layout2.php");
     }
 
     function SearchProduct()
@@ -77,6 +77,6 @@ class sanpham
         $list_loai = $this->model->listrecords_loai();
         $page_loai = "Views/listloai_layout2.php";
         $page_files = "Views/listproduct_layout2.php";
-        require_once("layout2.php");
+        require_once("Layout2.php");
     }
 }

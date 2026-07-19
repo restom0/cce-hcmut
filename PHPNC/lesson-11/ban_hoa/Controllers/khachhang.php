@@ -1,6 +1,6 @@
 <?php
 //nạp model để có các hàm tương tác db
-require_once "models/model_khachhang.php";
+require_once "Models/model_khachhang.php";
 class khachhang
 {
     private $model = null;
@@ -41,14 +41,14 @@ class khachhang
         $page_title = "Danh sách hãng sữa";
         $page_loai = "Views/listloai_layout2.php";
         $page_files = "views/khachhang/list.php";
-        require_once("layout2.php");
+        require_once("Layout2.php");
     }
     function addnew()
     {
         $page_title = "Thêm khách hàng";
         $page_loai = "Views/listloai_layout2.php";
         $page_files = "views/khachhang/addnew.php";
-        require_once("layout2.php");
+        require_once("Layout2.php");
     }
 
     function store()
@@ -76,7 +76,7 @@ class khachhang
         $page_title = "Cập nhật Hãng Sữa";
         $page_loai = "Views/listloai_layout2.php";
         $page_files = "views/khachhang/edit.php";
-        require_once("layout2.php");
+        require_once("Layout2.php");
     }
     function update()
     {
