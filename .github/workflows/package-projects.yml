@@ -1,0 +1,109 @@
+name: Package projects
+
+# Vercel cannot serve these: the four PHP projects need a PHP runtime and a
+# MySQL database, and Bootstrap/project is bare Angular source with no
+# package.json or angular.json to build from. Instead each one is syntax
+# checked, its dependencies resolved where possible, and published as a
+# deployable archive you can drop onto PHP hosting.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  package:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: lavarel
+            dir: Lavarel/project
+            composer: true
+          - name: da
+            dir: ĐA/project
+            composer: true
+          - name: phpnc
+            dir: PHPNC/project
+            composer: false
+          - name: phpcb
+            dir: PHPCB/project
+            composer: false
+          # No PHP and no build config; packaged so the source is still
+          # downloadable from CI alongside the others.
+          - name: bootstrap
+            dir: Bootstrap/project
+            composer: false
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer:v2
+          coverage: none
+
+      # Blade templates are deliberately excluded: @extends / @section are not
+      # valid PHP and php -l reports them as parse errors.
+      - name: Lint PHP syntax
+        run: |
+          set -euo pipefail
+          count=0
+          failed=0
+          while IFS= read -r -d '' file; do
+            count=$((count + 1))
+            if ! php -l "$file" > /dev/null 2>&1; then
+              echo "::error file=$file::$(php -l "$file" 2>&1 | head -1)"
+              failed=$((failed + 1))
+            fi
+          done < <(find "${{ matrix.dir }}" \
+                     -name '*.php' \
+                     ! -name '*.blade.php' \
+                     ! -path '*/vendor/*' \
+                     ! -path '*/node_modules/*' \
+                     ! -path '*/bower_components/*' \
+                     ! -path '*/homework/*' \
+                     -print0)
+          echo "Checked $count PHP files in ${{ matrix.dir }}; $failed failed."
+          [ "$failed" -eq 0 ]
+
+      - name: Validate composer manifest
+        if: matrix.composer
+        working-directory: ${{ matrix.dir }}
+        run: composer validate --no-check-publish --no-check-all
+
+      # --no-scripts because Laravel's post-install hooks boot the app, which
+      # needs a .env and a database that CI does not have.
+      - name: Install production dependencies
+        if: matrix.composer
+        working-directory: ${{ matrix.dir }}
+        run: composer install --no-dev --optimize-autoloader --no-interaction --no-progress --no-scripts
+
+      - name: Build archive
+        run: |
+          set -euo pipefail
+          mkdir -p _packages
+          zip -rq "_packages/${{ matrix.name }}.zip" "${{ matrix.dir }}" \
+            -x '*/node_modules/*' \
+            -x '*/.git/*' \
+            -x '*/exercises/*' \
+            -x '*.zip' \
+            -x '*.rar'
+          ls -lh "_packages/${{ matrix.name }}.zip"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.name }}-package
+          path: _packages/${{ matrix.name }}.zip
+          retention-days: 30
+
+      # Tagging the repo publishes the same archives as release downloads.
+      - name: Attach to release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: _packages/${{ matrix.name }}.zip

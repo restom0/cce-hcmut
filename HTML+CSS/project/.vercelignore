@@ -1,0 +1,4 @@
+# The exam site itself is index.html plus its assets. Everything below is
+# coursework that should not be published alongside it.
+exercises/
+thi_html.docx

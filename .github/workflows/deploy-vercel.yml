@@ -1,0 +1,109 @@
+name: Deploy to Vercel
+
+# Only the three web projects that Vercel can actually serve are here.
+# The PHP projects (Lavarel, ĐA, PHPNC, PHPCB) need a PHP runtime and a MySQL
+# database, neither of which Vercel provides natively — they are built and
+# published as deployable archives by package-projects.yml instead.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'HTML+CSS/project/**'
+      - 'JS/project/projectAngular/**'
+      - 'JS/project/myproject1/**'
+      - '.github/workflows/deploy-vercel.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: vercel-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Plain static site: no build step, published as-is.
+          - name: html-css
+            dir: HTML+CSS/project
+            node: '20'
+            build: false
+            output: HTML+CSS/project
+            project_id_secret: VERCEL_PROJECT_ID_HTML_CSS
+
+          # Angular 22 requires Node ^22.22.3 || ^24.15.0 || >=26.0.0.
+          - name: project-angular
+            dir: JS/project/projectAngular
+            node: '24'
+            build: true
+            output: JS/project/projectAngular/dist/project-angular/browser
+            project_id_secret: VERCEL_PROJECT_ID_PROJECT_ANGULAR
+
+          # Angular 22 with SSR configured. Deployed as a static site, so the
+          # browser bundle is what ships.
+          - name: myproject1
+            dir: JS/project/myproject1
+            node: '24'
+            build: true
+            output: JS/project/myproject1/dist/myproject1/browser
+            project_id_secret: VERCEL_PROJECT_ID_MYPROJECT1
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Fail loudly but early if the deploy has never been configured, rather
+      # than after a full Angular build.
+      - name: Check Vercel credentials
+        id: creds
+        env:
+          TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          ORG: ${{ secrets.VERCEL_ORG_ID }}
+          PROJECT: ${{ secrets[matrix.project_id_secret] }}
+        run: |
+          if [ -z "$TOKEN" ] || [ -z "$ORG" ] || [ -z "$PROJECT" ]; then
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Missing VERCEL_TOKEN, VERCEL_ORG_ID or ${{ matrix.project_id_secret }}; build will run but deploy is skipped."
+          else
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-node@v4
+        if: matrix.build
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+          cache-dependency-path: ${{ matrix.dir }}/package-lock.json
+
+      - name: Install dependencies
+        if: matrix.build
+        working-directory: ${{ matrix.dir }}
+        run: npm ci
+
+      - name: Build
+        if: matrix.build
+        working-directory: ${{ matrix.dir }}
+        run: npm run build
+
+      - name: Confirm build output exists
+        if: matrix.build
+        run: |
+          if [ ! -d "${{ matrix.output }}" ]; then
+            echo "::error::Expected build output at ${{ matrix.output }} but it is missing."
+            echo "Contents of ${{ matrix.dir }}/dist:"
+            ls -R "${{ matrix.dir }}/dist" || true
+            exit 1
+          fi
+
+      - name: Deploy to Vercel
+        if: steps.creds.outputs.configured == 'true'
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets[matrix.project_id_secret] }}
+        run: |
+          npm install --global vercel@latest
+          vercel deploy "${{ matrix.output }}" \
+            --prod --yes --token="${{ secrets.VERCEL_TOKEN }}"

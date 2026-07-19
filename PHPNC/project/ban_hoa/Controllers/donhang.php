@@ -1,0 +1,43 @@
+<?php
+//nạp model để có các hàm tương tác db
+require_once "Models/model_donhang.php";
+class donhang
+{
+    private $model = null;
+    function __construct()
+    {
+        $this->model = new model_donhang();
+        //chức năng mặc định
+        $action = "donhang";
+        //tiếp nhận chức năng user request
+        if (isset($_GET["action"])) $action = $_GET["action"];
+        switch ($action) {
+            case "donhang":
+                $this->listproduct();
+                break;
+            case "chitiet":
+                $this->detail();
+                break;
+            default:
+        }
+    }
+
+    function listproduct()
+    {
+        $list = $this->model->listrecords();
+        $page_title = "";
+        $page_loai = "Views/listloai_layout2.php";
+        $page_files = "Views/donhang/list.php";
+        require_once("Layout2.php");
+    }
+
+    function detail()
+    {
+        $ma = $_GET["ma"];
+        $list = $this->model->detailrecord($ma);
+        $page_title = "";
+        $page_loai = "Views/listloai_layout2.php";
+        $page_files = "Views/donhang/detail.php";
+        require_once("Layout2.php");
+    }
+}

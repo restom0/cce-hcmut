@@ -1,16 +1,35 @@
 version: 2
 updates:
   - package-ecosystem: "composer"
-    directory: "/Lavarel/myproject"
+    directory: "/Lavarel/project"
     schedule:
       interval: "weekly"   # Options: daily, weekly, monthly
     open-pull-requests-limit: 10
     ignore:
       - dependency-name: "php"  # Ignore specific dependencies if necessary
   - package-ecosystem: "composer"
-    directory: "/ĐA/server"
+    directory: "/ĐA/project"
     schedule:
       interval: "weekly"   # Options: daily, weekly, monthly
     open-pull-requests-limit: 10
     ignore:
       - dependency-name: "php"  # Ignore specific dependencies if necessary
+
+  # The two Angular apps are built in CI now, so their lockfiles are worth
+  # tracking too. project-angular stays on Angular 14, which pins Node 16.
+  - package-ecosystem: "npm"
+    directory: "/JS/project/projectAngular"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+  - package-ecosystem: "npm"
+    directory: "/JS/project/myproject1"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5

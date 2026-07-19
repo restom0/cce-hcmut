@@ -1,0 +1,36 @@
+name: SonarCloud
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+jobs:
+  sonar:
+    name: Quality scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Shallow clones stop Sonar attributing issues to the right commit.
+          fetch-depth: 0
+
+      - name: Check Sonar token
+        id: creds
+        env:
+          TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::SONAR_TOKEN is not set; skipping the scan. Create the project on sonarcloud.io and add the token as a repository secret."
+          else
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: SonarCloud scan
+        if: steps.creds.outputs.configured == 'true'
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

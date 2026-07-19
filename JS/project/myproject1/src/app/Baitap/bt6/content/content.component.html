@@ -1,0 +1,12 @@
+<div class="b-card">
+  @for (c of card; track c) {
+    <div class="card" style="width: 18rem;">
+      <img src="{{c.img}}" class="card-img-top" alt="...">
+      <div class="card-body">
+        <p class="card-text">
+          {{c.content}}
+        </p>
+      </div>
+    </div>
+  }
+</div>
