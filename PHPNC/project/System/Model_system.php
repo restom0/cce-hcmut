@@ -1,10 +1,11 @@
 <?php
+    require_once "Config.php";
     class model_system
     {
         public $conn;
         function __construct()
         {
-            $this->conn = @new mysqli("localhost", "root", null, "ql_ban_sua");
+            $this->conn = @new mysqli(HOST_DB, USER_DB, PASS_DB, NAME_DB);
         }
         function query($sql)
         {

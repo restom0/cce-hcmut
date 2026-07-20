@@ -1,0 +1,53 @@
+name: cce-da
+
+services:
+  app:
+    build: .
+    image: ghcr.io/restom0/cce-hcmut/da:local
+    ports:
+      # 8002; Lavarel already takes 8001 so both can run at once.
+      - "8002:80"
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: http://localhost:8002
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_DATABASE: laravel
+      DB_USERNAME: laravel
+      DB_PASSWORD: secret
+      # The seed dump below already carries the shop's tables. Flip to "true"
+      # only against an empty database.
+      RUN_MIGRATIONS: "false"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      # Exposed so you can point a client at it; drop this line if 3308 clashes.
+      - "3308:3306"
+    volumes:
+      - da-db:/var/lib/mysql
+      # db_banhang_data.sql is schema plus seed data for the shop: products,
+      # product types, bills, customers, slides. It carries no CREATE DATABASE,
+      # so MySQL loads it into MYSQL_DATABASE above. Scripts in this directory
+      # run once, on first start of an empty volume.
+      - ./exercises/buoi-01/db_banhang_data.sql:/docker-entrypoint-initdb.d/10-schema.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+volumes:
+  da-db:
