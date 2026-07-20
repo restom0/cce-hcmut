@@ -1,0 +1,13 @@
+# Shell scripts must keep LF endings. docker-entrypoint.sh is COPYed into a
+# Linux image and run through /bin/sh; with CRLF the shebang resolves to
+# "/bin/sh\r" and the container dies with "bad interpreter". Git on Windows
+# would otherwise hand out CRLF working copies.
+*.sh text eol=lf
+
+# Same reasoning for anything else the images execute or parse literally.
+Dockerfile text eol=lf
+*.dockerfile text eol=lf
+docker-entrypoint* text eol=lf
+
+# MySQL reads these from docker-entrypoint-initdb.d; keep them stable.
+*.sql text eol=lf

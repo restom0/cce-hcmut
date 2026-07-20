@@ -5,7 +5,7 @@ class model_system
     public $conn;
     function __construct()
     {
-        $this->conn = @new mysqli(HOST_DB, USER_DB, null, NAME_DB);
+        $this->conn = @new mysqli(HOST_DB, USER_DB, PASS_DB, NAME_DB);
     }
     function query($sql)
     {

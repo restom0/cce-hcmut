@@ -1,0 +1,52 @@
+name: cce-lavarel
+
+services:
+  app:
+    build: .
+    image: ghcr.io/restom0/cce-hcmut/lavarel:local
+    ports:
+      # 8001 so this and the ĐA app can run at the same time.
+      - "8001:80"
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: http://localhost:8001
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_DATABASE: laravel
+      DB_USERNAME: laravel
+      DB_PASSWORD: secret
+      # The seed dump below already carries the schema, including Laravel's own
+      # migrations table. Flip to "true" only against an empty database.
+      RUN_MIGRATIONS: "false"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      # Exposed so you can point a client at it; drop this line if 3307 clashes.
+      - "3307:3306"
+    volumes:
+      - lavarel-db:/var/lib/mysql
+      # laravel_demo.sql is the fullest dump in the repo: the news-site tables
+      # plus users, comments and Laravel's framework tables. MySQL runs
+      # everything in this directory once, on first start of an empty volume.
+      - ./exercises/buoi-08/laravel_demo.sql:/docker-entrypoint-initdb.d/10-schema.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+volumes:
+  lavarel-db:

@@ -1,0 +1,22 @@
+# Installed fresh inside the image.
+vendor/
+node_modules/
+
+# Coursework kept beside the app but not part of it. The SQL dumps are still
+# reachable from the host, which is where docker-compose reads the seed from.
+exercises/
+
+# Local state that must not leak into an image.
+.env
+.env.*.local
+storage/logs/*
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/views/*
+bootstrap/cache/*.php
+
+.git/
+.gitignore
+.vercel/
+docker-compose.yml
+README.md

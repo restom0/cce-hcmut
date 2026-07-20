@@ -1,0 +1,44 @@
+name: cce-phpcb
+
+services:
+  app:
+    build: .
+    image: ghcr.io/restom0/cce-hcmut/phpcb:local
+    ports:
+      # 8004; 8001-8003 are taken by Lavarel, ĐA and PHPNC.
+      - "8004:80"
+    environment:
+      DB_HOST: db
+      DB_NAME: banhkem
+      DB_USER: phpcb
+      DB_PASS: secret
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: banhkem
+      MYSQL_USER: phpcb
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      # Exposed so you can point a client at it; drop this line if 3310 clashes.
+      - "3310:3306"
+    volumes:
+      - phpcb-db:/var/lib/mysql
+      # No seed is mounted because this course never shipped a schema dump.
+      # The database comes up empty, so pages that query it will error until
+      # you create the tables the queries expect. Drop a .sql file in
+      # docker-entrypoint-initdb.d here once you have one.
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+volumes:
+  phpcb-db:

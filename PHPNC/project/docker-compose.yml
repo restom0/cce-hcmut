@@ -1,0 +1,50 @@
+name: cce-phpnc
+
+services:
+  app:
+    build: .
+    image: ghcr.io/restom0/cce-hcmut/phpnc:local
+    ports:
+      # 8003; Lavarel holds 8001 and ĐA 8002.
+      #   ql_ban_sua -> http://localhost:8003/
+      #   ql_ban_hoa -> http://localhost:8003/ban_hoa/
+      - "8003:80"
+    environment:
+      # DB_NAME is deliberately not set. Both apps ship their own default in
+      # System/Config.php (ql_ban_sua at the root, ql_ban_hoa under ban_hoa/),
+      # and setting it here would point both at the same database.
+      DB_HOST: db
+      DB_USER: phpnc
+      DB_PASS: secret
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: ql_ban_sua
+      MYSQL_USER: phpnc
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      # Exposed so you can point a client at it; drop this line if 3309 clashes.
+      - "3309:3306"
+    volumes:
+      - phpnc-db:/var/lib/mysql
+      # Scripts run once on first start of an empty volume, in filename order.
+      # ql_ban_sua.sql is tables only, so it lands in MYSQL_DATABASE above.
+      # ql_ban_hoa.sql carries its own CREATE DATABASE, hence the grants after.
+      - ./ql_ban_sua.sql:/docker-entrypoint-initdb.d/10-ql_ban_sua.sql:ro
+      - ./ban_hoa/ql_ban_hoa.sql:/docker-entrypoint-initdb.d/20-ql_ban_hoa.sql:ro
+      - ./docker/grants.sql:/docker-entrypoint-initdb.d/30-grants.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+volumes:
+  phpnc-db:

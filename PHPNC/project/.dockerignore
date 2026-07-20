@@ -1,0 +1,13 @@
+# Weekly drills, not part of either application. ban_hoa/ is deliberately not
+# listed here: it is the second app and must ship inside the image.
+exercises/
+
+# Seed dumps are mounted into the db service from the host, not baked in.
+*.sql
+ban_hoa/*.sql
+docker/
+
+.git/
+.gitignore
+docker-compose.yml
+README.md
