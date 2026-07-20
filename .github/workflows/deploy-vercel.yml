@@ -98,8 +98,30 @@ jobs:
             exit 1
           fi
 
-      - name: Deploy to Vercel
-        if: steps.creds.outputs.configured == 'true'
+      # The Angular apps are already built above. Deploying the output directory
+      # with a plain `vercel deploy` still triggers Vercel's own server-side
+      # build (the project's Angular preset runs `ng build`), which fails with
+      # exit 127 because there is no `ng` in a folder of static files. Instead,
+      # hand Vercel a Build Output API v3 bundle and deploy it with --prebuilt,
+      # which skips the build entirely and just serves the files.
+      - name: Deploy prebuilt bundle to Vercel
+        if: steps.creds.outputs.configured == 'true' && matrix.build
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets[matrix.project_id_secret] }}
+        run: |
+          npm install --global vercel@latest
+          staging="$(mktemp -d)"
+          mkdir -p "$staging/.vercel/output/static"
+          cp -R "${{ matrix.output }}/." "$staging/.vercel/output/static/"
+          printf '{"version":3}\n' > "$staging/.vercel/output/config.json"
+          cd "$staging"
+          vercel deploy --prebuilt --prod --yes --token="${{ secrets.VERCEL_TOKEN }}"
+
+      # html-css has no build step: it is already a static directory, and a
+      # plain deploy serves it as-is while honouring its .vercelignore.
+      - name: Deploy static site to Vercel
+        if: steps.creds.outputs.configured == 'true' && !matrix.build
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets[matrix.project_id_secret] }}
