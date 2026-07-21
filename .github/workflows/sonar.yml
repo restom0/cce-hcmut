@@ -37,8 +37,21 @@ jobs:
       # scanner's own flag rather than a second action: sonarqube-quality-gate-
       # action was last released in 2025 and this repo has already been bitten
       # once by an outdated Sonar action.
-      - name: SonarCloud scan and quality gate
+      - name: SonarCloud scan and quality gate (attempt 1)
         if: steps.creds.outputs.configured == 'true'
+        id: sonar_scan_first
+        continue-on-error: true
+        uses: SonarSource/sonarqube-scan-action@v8.2.1
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.qualitygate.wait=true
+
+      # SonarCloud occasionally returns transient 5xx responses while loading
+      # project repositories. Retry once so infra blips do not fail the job.
+      - name: SonarCloud scan and quality gate (retry once)
+        if: steps.creds.outputs.configured == 'true' && steps.sonar_scan_first.outcome == 'failure'
         uses: SonarSource/sonarqube-scan-action@v8.2.1
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
