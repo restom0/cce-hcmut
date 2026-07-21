@@ -38,7 +38,17 @@ jobs:
       # action was last released in 2025 and this repo has already been bitten
       # once by an outdated Sonar action.
       - name: SonarCloud scan and quality gate
-        if: steps.creds.outputs.configured == 'true'
+        if: steps.creds.outputs.configured == 'true' && github.event_name != 'pull_request'
+        uses: SonarSource/sonarqube-scan-action@v8.2.1
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.branch.name=main
+            -Dsonar.qualitygate.wait=true
+
+      - name: SonarCloud pull request scan and quality gate
+        if: steps.creds.outputs.configured == 'true' && github.event_name == 'pull_request'
         uses: SonarSource/sonarqube-scan-action@v8.2.1
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
