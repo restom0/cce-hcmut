@@ -25,6 +25,7 @@ JS/project/myproject1/dist/
 
 # Laravel runtime state
 .env
+.env.local
 .env.*.local
 !.env.example
 **/storage/framework/cache/data/*

@@ -30,8 +30,18 @@ jobs:
           fi
 
       # v5 is affected by an argument-injection advisory (Dependabot #385).
-      - name: SonarCloud scan
+      #
+      # qualitygate.wait makes the scanner block until SonarCloud has finished
+      # computing the gate and exit non-zero if it fails, so a regression turns
+      # this job red instead of only showing up on the dashboard. Done with the
+      # scanner's own flag rather than a second action: sonarqube-quality-gate-
+      # action was last released in 2025 and this repo has already been bitten
+      # once by an outdated Sonar action.
+      - name: SonarCloud scan and quality gate
         if: steps.creds.outputs.configured == 'true'
         uses: SonarSource/sonarqube-scan-action@v8.2.1
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.qualitygate.wait=true
