@@ -54,8 +54,8 @@ class loaihoa
     function store()
     {
         $ten = $_POST["tenhang"];
-        $sql = "Select * from loai where ten_loai='$ten'";
-        $kq = $this->model->query($sql);
+        $sql = "Select * from loai where ten_loai=?";
+        $kq = $this->model->query($sql, [$ten]);
         if ($kq->num_rows > 0) {
             $_SESSION["thongbao"] = "Mã hãng đã có trong bảng";
         } else {
@@ -90,13 +90,13 @@ class loaihoa
     function delete()
     {
         $id = $_GET["ma"];
-        $sql = "select * from hoa where id_loai='$id'";
-        $kq = $this->model->query($sql);
+        $sql = "select * from hoa where id_loai=?";
+        $kq = $this->model->query($sql, [$id]);
         if ($kq->num_rows > 0) {
             $_SESSION["thongbao"] = "Loại hoa này đã có hoa không xoá được !!";
         } else {
-            $sql = "DELETE FROM loai WHERE id='$id'";
-            $kq = $this->model->execute($sql);
+            $sql = "DELETE FROM loai WHERE id=?";
+            $kq = $this->model->execute($sql, [$id]);
             if ($kq)
                 $_SESSION["thongbao"] = "Đã xoá loại hoa này !!";
             else

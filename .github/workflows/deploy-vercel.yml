@@ -7,7 +7,7 @@ name: Deploy to Vercel
 
 on:
   push:
-    branches: [main]
+    branches: [master]
     paths:
       - 'HTML+CSS/project/**'
       - 'JS/project/projectAngular/**'
@@ -21,6 +21,9 @@ on:
       - '**/project/exercises/**'
       - '**/README.md'
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 concurrency:
   group: vercel-${{ github.ref }}

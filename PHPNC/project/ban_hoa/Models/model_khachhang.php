@@ -4,15 +4,15 @@
     {
         function store($ten, $dc, $dt, $em)
         { //hàm lưu 1 record vào table
-            $sql = "Insert Into khach_hang(ho_ten,dia_chi,dien_thoai,email) Value('$ten', '$dc','$dt','$em')";
-            $kq = $this->execute($sql);
+            $sql = "Insert Into khach_hang(ho_ten,dia_chi,dien_thoai,email) Value(?,?,?,?)";
+            $kq = $this->execute($sql, [$ten, $dc, $dt, $em]);
             return $kq;
         }
         function update($ma, $ten, $dc, $dt, $em)
         { //hàm cập nhật 1 record vào table
-            $sql = "UPDATE khach_hang SET ho_ten='$ten', dia_chi = '$dc', dien_thoai='$dt', email='$em' 
-                            WHERE id='$ma'";
-            $kq = $this->execute($sql);
+            $sql = "UPDATE khach_hang SET ho_ten=?, dia_chi = ?, dien_thoai=?, email=? 
+                            WHERE id=?";
+            $kq = $this->execute($sql, [$ten, $dc, $dt, $em, $ma]);
             return $kq;
         }
         function delete($id)
@@ -26,8 +26,8 @@
         }
         function detailrecord($id)
         { //hàm lấy chi tiết 1 record trong table
-            $sql = "SELECT * FROM khach_hang WHERE id='$id'";
-            $kq = $this->query($sql);
+            $sql = "SELECT * FROM khach_hang WHERE id=?";
+            $kq = $this->query($sql, [$id]);
             $kq = $kq->fetch_assoc();
             return $kq;
         }

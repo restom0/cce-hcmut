@@ -19,7 +19,10 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'],
+    // Was ['*'], which lets any origin read authenticated responses from the
+    // paths above. Neither app registers a single API route, so the default is
+    // its own origin; set CORS_ALLOWED_ORIGINS (comma separated) if that changes.
+    'allowed_origins' => array_filter(explode(',', env('CORS_ALLOWED_ORIGINS', env('APP_URL', 'http://localhost')))),
 
     'allowed_origins_patterns' => [],
 

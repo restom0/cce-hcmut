@@ -8,7 +8,7 @@ name: Package projects
 
 on:
   push:
-    branches: [main]
+    branches: [master]
   pull_request:
   workflow_dispatch:
 
@@ -39,9 +39,9 @@ jobs:
             composer: false
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
 
-      - uses: shivammathur/setup-php@v2
+      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
         with:
           php-version: '8.2'
           tools: composer:v2
@@ -95,7 +95,7 @@ jobs:
             -x '*.rar'
           ls -lh "_packages/${{ matrix.name }}.zip"
 
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ${{ matrix.name }}-package
           path: _packages/${{ matrix.name }}.zip
@@ -104,6 +104,6 @@ jobs:
       # Tagging the repo publishes the same archives as release downloads.
       - name: Attach to release
         if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3.0.2
         with:
           files: _packages/${{ matrix.name }}.zip
