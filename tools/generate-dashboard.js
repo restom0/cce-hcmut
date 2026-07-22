@@ -34,6 +34,17 @@ const esc = (s) => String(s)
 // separators intact while escaping the rest.
 const href = (p) => encodeURI(p);
 
+// Where links to browsable source should point.
+//
+// Locally the page is opened from a clone, so relative paths are right. The
+// Vercel build ships only index.html and the course PDFs — a directory of PHP
+// cannot be served there and a .md would download rather than render — so CI
+// passes --source-base and those links go to GitHub instead. PDFs stay
+// relative either way, because they are shipped.
+const baseArg = process.argv.indexOf('--source-base');
+const SOURCE_BASE = baseArg !== -1 ? (process.argv[baseArg + 1] || '').replace(/\/+$/, '') : '';
+const srcHref = (p) => (SOURCE_BASE ? SOURCE_BASE + '/' + encodeURI(p) : encodeURI(p));
+
 function readCourse(c) {
   const base = path.join(ROOT, c.dir);
   // Linked only when present: HTML+CSS has no README on every branch, and a
@@ -107,7 +118,7 @@ const card = (c) => {
 
   const apps = c.apps.length
     ? `<div class="row"><h3>Apps</h3><ul class="chips">${c.apps.map((a) =>
-        `<li><a href="${href(a.href)}">${esc(a.name)}</a></li>`).join('')}</ul></div>`
+        `<li><a href="${srcHref(a.href)}">${esc(a.name)}</a></li>`).join('')}</ul></div>`
     : '';
 
   const lectures = c.lectures.length
@@ -122,7 +133,7 @@ const card = (c) => {
 
   const labs = c.labs.length
     ? `<div class="row"><h3>Labs <span class="n">${c.labs.length}</span></h3><ul class="labs">${c.labs.map((l) =>
-        `<li><a href="${href(l.href)}"><span class="lab-name">${esc(l.name)}</span>` +
+        `<li><a href="${srcHref(l.href)}"><span class="lab-name">${esc(l.name)}</span>` +
         `<span class="lab-meta">${l.count
             ? `${l.count} file${l.count === 1 ? '' : 's'}`
             : `${l.dirs} folder${l.dirs === 1 ? '' : 's'}`}</span></a>` +
@@ -137,7 +148,7 @@ const card = (c) => {
   return `<article class="course" data-search="${esc(searchBlob)}">
   <header class="course-head">
     <div>
-      <h2><a href="${href(c.dir)}">${esc(c.dir)}</a></h2>
+      <h2><a href="${srcHref(c.dir)}">${esc(c.dir)}</a></h2>
       <p class="subject">${esc(c.subject)}</p>
     </div>
     <div class="tags">
@@ -151,8 +162,8 @@ const card = (c) => {
   ${baitap}
   ${labs}
   <footer class="course-foot">
-    ${c.hasReadme ? `<a href="${href(c.dir + '/README.md')}">README</a>` : ''}
-    ${c.project ? `<a href="${href(c.project.href)}">project/</a>` : ''}
+    ${c.hasReadme ? `<a href="${srcHref(c.dir + '/README.md')}">README</a>` : ''}
+    ${c.project ? `<a href="${srcHref(c.project.href)}">project/</a>` : ''}
   </footer>
 </article>`;
 };
@@ -268,9 +279,13 @@ ${data.map(card).join('\n')}
   <p id="none">Nothing matches that filter.</p>
 
   <p class="note">
-    Links are relative, so this page works from a clone: open <code>index.html</code>
-    directly, or serve the repo root. Regenerate after changing coursework with
-    <code>node tools/generate-dashboard.js</code>.
+    ${SOURCE_BASE
+      ? `Lecture PDFs are served from this site. Labs, apps and READMEs are source,
+         so they link to <a href="${esc(SOURCE_BASE)}">GitHub</a> — the PHP ones need a
+         server and a database, which this host does not provide.`
+      : `Links are relative, so this page works from a clone: open <code>index.html</code>
+         directly, or serve the repo root. Regenerate after changing coursework with
+         <code>node tools/generate-dashboard.js</code>.`}
   </p>
 </div>
 

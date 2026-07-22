@@ -13,7 +13,17 @@ on:
       - 'JS/project/projectAngular/**'
       - 'JS/project/myproject1/**'
       - '.github/workflows/deploy-vercel.yml'
+      # The dashboard indexes the whole repo, so it is rebuilt whenever the
+      # material it lists changes.
+      - 'index.html'
+      - 'tools/**'
+      - '**/courses/**'
+      - '**/project/exercises/**'
+      - '**/README.md'
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 concurrency:
   group: vercel-${{ github.ref }}
@@ -53,7 +63,7 @@ jobs:
             project_id_secret: VERCEL_PROJECT_ID_MYPROJECT1
 
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+      - uses: actions/checkout@v5
 
       # Fail loudly but early if the deploy has never been configured, rather
       # than after a full Angular build.
@@ -71,20 +81,17 @@ jobs:
             echo "configured=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+      - uses: actions/setup-node@v7
         if: matrix.build
         with:
           node-version: ${{ matrix.node }}
           cache: npm
           cache-dependency-path: ${{ matrix.dir }}/package-lock.json
 
-      # --ignore-scripts blocks lifecycle scripts from every transitive
-      # dependency at install time. Verified both Angular apps still install
-      # and build with it, so nothing here relies on a postinstall.
       - name: Install dependencies
         if: matrix.build
         working-directory: ${{ matrix.dir }}
-        run: npm ci --ignore-scripts
+        run: npm ci
 
       - name: Build
         if: matrix.build
@@ -112,17 +119,14 @@ jobs:
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets[matrix.project_id_secret] }}
-          # Expanded here rather than inside the run block, so the token never
-          # becomes part of the generated shell script.
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
-          npm install --global vercel@56.4.1 --ignore-scripts
+          npm install --global vercel@latest
           staging="$(mktemp -d)"
           mkdir -p "$staging/.vercel/output/static"
           cp -R "${{ matrix.output }}/." "$staging/.vercel/output/static/"
           printf '{"version":3}\n' > "$staging/.vercel/output/config.json"
           cd "$staging"
-          vercel deploy --prebuilt --prod --yes --token="$VERCEL_TOKEN"
+          vercel deploy --prebuilt --prod --yes --token="${{ secrets.VERCEL_TOKEN }}"
 
       # html-css has no build step: it is already a static directory, and a
       # plain deploy serves it as-is while honouring its .vercelignore.
@@ -131,8 +135,71 @@ jobs:
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets[matrix.project_id_secret] }}
+        run: |
+          npm install --global vercel@latest
+          vercel deploy "${{ matrix.output }}" \
+            --prod --yes --token="${{ secrets.VERCEL_TOKEN }}"
+
+  # The dashboard is the site root: an index of every course, its lectures and
+  # its labs. The lecture PDFs are shipped alongside it so those links resolve;
+  # everything else it links to is source, and points at GitHub instead — a
+  # directory of PHP cannot be served here and a .md would download rather than
+  # render.
+  dashboard:
+    name: dashboard
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Check Vercel credentials
+        id: creds
+        env:
+          TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          ORG: ${{ secrets.VERCEL_ORG_ID }}
+          PROJECT: ${{ secrets.VERCEL_PROJECT_ID_DASHBOARD }}
+        run: |
+          if [ -z "$TOKEN" ] || [ -z "$ORG" ] || [ -z "$PROJECT" ]; then
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Missing VERCEL_TOKEN, VERCEL_ORG_ID or VERCEL_PROJECT_ID_DASHBOARD; the dashboard is built but not deployed."
+          else
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+
+      # Regenerated rather than shipping the committed copy, so material added
+      # without re-running the generator still appears on the deployed page.
+      - name: Generate dashboard
+        run: |
+          node tools/generate-dashboard.js \
+            --source-base "${{ github.server_url }}/${{ github.repository }}/tree/${{ github.ref_name }}"
+
+      - name: Assemble bundle
+        id: bundle
+        run: |
+          staging="$(mktemp -d)"
+          static="$staging/.vercel/output/static"
+          mkdir -p "$static"
+          cp index.html "$static/"
+          for c in Bootstrap "HTML+CSS" JS Lavarel PHPCB PHPNC "ĐA"; do
+            if [ -d "$c/courses" ]; then
+              mkdir -p "$static/$c"
+              cp -R "$c/courses" "$static/$c/"
+            fi
+          done
+          printf '{"version":3}\n' > "$staging/.vercel/output/config.json"
+          echo "dir=$staging" >> "$GITHUB_OUTPUT"
+          echo "Bundle: $(du -sh "$static" | cut -f1) across $(find "$static" -type f | wc -l) files"
+
+      - name: Deploy to Vercel
+        if: steps.creds.outputs.configured == 'true'
+        working-directory: ${{ steps.bundle.outputs.dir }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_DASHBOARD }}
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
           npm install --global vercel@56.4.1 --ignore-scripts
-          vercel deploy "${{ matrix.output }}" \
-            --prod --yes --token="$VERCEL_TOKEN"
+          vercel deploy --prebuilt --prod --yes --token="$VERCEL_TOKEN"
