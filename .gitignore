@@ -34,6 +34,9 @@ JS/project/myproject1/dist/
 **/storage/logs/*.log
 **/bootstrap/cache/*.php
 
+# Local code index (196 MB SQLite), rebuilt per machine by `codegraph init`.
+.codegraph/
+
 # CI and tooling output produced when the workflows are run locally.
 _packages/
 coverage/
