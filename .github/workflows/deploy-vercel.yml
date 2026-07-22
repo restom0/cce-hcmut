@@ -22,6 +22,9 @@ on:
       - '**/README.md'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 concurrency:
   group: vercel-${{ github.ref }}
   cancel-in-progress: true
