@@ -7,7 +7,7 @@ name: Publish images
 
 on:
   push:
-    branches: [main]
+    branches: [master]
     tags: ['v*']
     paths:
       - 'Lavarel/project/**'
@@ -54,7 +54,8 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Tags: a moving "main", the commit SHA for pinning, and semver on tags.
+      # Tags: one that moves with the branch (now "master"), the commit SHA for
+      # pinning, and semver on tags.
       - name: Derive tags
         id: meta
         uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5

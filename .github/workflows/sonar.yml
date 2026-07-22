@@ -2,7 +2,7 @@ name: SonarCloud
 
 on:
   push:
-    branches: [main]
+    branches: [master]
   pull_request:
     types: [opened, synchronize, reopened]
   workflow_dispatch:
@@ -44,7 +44,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.branch.name=main
+            -Dsonar.branch.name=master
             -Dsonar.qualitygate.wait=true
 
       - name: SonarCloud pull request scan and quality gate
