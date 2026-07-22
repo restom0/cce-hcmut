@@ -12,7 +12,17 @@ RUN apt-get update \
 
 # index.php sits at the tree root, so the default document root is correct.
 WORKDIR /var/www/html
-COPY . .
+# Explicit allowlist rather than "COPY . ." so nothing new in the build
+# context is shipped by accident. ban_hoa is the second application and is
+# served from /ban_hoa/, so it belongs in the image.
+COPY Controllers ./Controllers
+COPY Models ./Models
+COPY System ./System
+COPY Views ./Views
+COPY Css ./Css
+COPY hinh_anh ./hinh_anh
+COPY ban_hoa ./ban_hoa
+COPY index.php layout.php dangnhap.php gioithieu.php thanhtoan.php ./
 RUN chown -R www-data:www-data /var/www/html
 
 EXPOSE 80

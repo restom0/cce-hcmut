@@ -29,7 +29,18 @@ WORKDIR /var/www/html
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist --no-interaction
 
-COPY . .
+# Copy only what the application needs. A blanket "COPY . ." would pull in
+# whatever happens to be in the build context, including files added after
+# .dockerignore was last reviewed.
+COPY app ./app
+COPY bootstrap ./bootstrap
+COPY config ./config
+COPY database ./database
+COPY public ./public
+COPY resources ./resources
+COPY routes ./routes
+COPY storage ./storage
+COPY artisan ./artisan
 RUN composer dump-autoload --optimize --no-dev \
  && chown -R www-data:www-data storage bootstrap/cache
 
