@@ -10,8 +10,8 @@
         }
         function detailrecord($id)
         { //hàm lấy chi tiết 1 record trong table
-            $sql = "SELECT * FROM sua WHERE Ma_sua='$id'";
-            $kq = $this->query($sql);
+            $sql = "SELECT * FROM sua WHERE Ma_sua=?";
+            $kq = $this->query($sql, [$id]);
             $kq = $kq->fetch_assoc();
             return $kq;
         }

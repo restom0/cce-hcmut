@@ -10,10 +10,10 @@
         }
         function detailrecord($id)
         { //hàm lấy chi tiết 1 record trong table
-            $sql = "SELECT * 
-            FROM chitiet_donhang,hoa 
-            WHERE chitiet_donhang.id_hoa=hoa.id & chitiet_donhang.id_donhang='$id'";
-            $kq = $this->query($sql);
+            $sql = "SELECT *
+            FROM chitiet_donhang,hoa
+            WHERE chitiet_donhang.id_hoa=hoa.id AND chitiet_donhang.id_donhang=?";
+            $kq = $this->query($sql, [$id]);
             return $kq;
         }
     } //class 

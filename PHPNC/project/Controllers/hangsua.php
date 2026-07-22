@@ -56,8 +56,8 @@ class hangsua
         $dc = $_POST["diachi"];
         $dt = $_POST["dienthoai"];
         $em = $_POST["email"];
-        $sql = "Select * from hang_sua where ma_hang_sua='$ma'";
-        $kq = $this->model->query($sql);
+        $sql = "Select * from hang_sua where ma_hang_sua=?";
+        $kq = $this->model->query($sql, [$ma]);
         if ($kq->num_rows > 0) {
             $_SESSION["thongbao"] = "Mã hãng sữa đã có trong bảng";
         } else {
@@ -94,13 +94,13 @@ class hangsua
     function delete()
     {
         $ma = $_GET["ma"];
-        $sql = "select * from sua where ma_hang_sua='$ma'";
-        $kq = $this->model->query($sql);
+        $sql = "select * from sua where ma_hang_sua=?";
+        $kq = $this->model->query($sql, [$ma]);
         if ($kq->num_rows > 0) {
             $_SESSION["thongbao"] = "Hãng sữa này đã có con không xoá được !!";
         } else {
-            $sql = "DELETE FROM hang_sua WHERE ma_hang_sua='$ma'";
-            $kq = $this->model->execute($sql);
+            $sql = "DELETE FROM hang_sua WHERE ma_hang_sua=?";
+            $kq = $this->model->execute($sql, [$ma]);
             if ($kq)
                 $_SESSION["thongbao"] = "Đã xoá hãng sữa này !!";
             else
