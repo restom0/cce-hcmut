@@ -13,6 +13,13 @@ on:
       - 'JS/project/projectAngular/**'
       - 'JS/project/myproject1/**'
       - '.github/workflows/deploy-vercel.yml'
+      # The dashboard indexes the whole repo, so it is rebuilt whenever the
+      # material it lists changes.
+      - 'index.html'
+      - 'tools/**'
+      - '**/courses/**'
+      - '**/project/exercises/**'
+      - '**/README.md'
   workflow_dispatch:
 
 concurrency:
@@ -129,3 +136,67 @@ jobs:
           npm install --global vercel@latest
           vercel deploy "${{ matrix.output }}" \
             --prod --yes --token="${{ secrets.VERCEL_TOKEN }}"
+
+  # The dashboard is the site root: an index of every course, its lectures and
+  # its labs. The lecture PDFs are shipped alongside it so those links resolve;
+  # everything else it links to is source, and points at GitHub instead — a
+  # directory of PHP cannot be served here and a .md would download rather than
+  # render.
+  dashboard:
+    name: dashboard
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Check Vercel credentials
+        id: creds
+        env:
+          TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          ORG: ${{ secrets.VERCEL_ORG_ID }}
+          PROJECT: ${{ secrets.VERCEL_PROJECT_ID_DASHBOARD }}
+        run: |
+          if [ -z "$TOKEN" ] || [ -z "$ORG" ] || [ -z "$PROJECT" ]; then
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Missing VERCEL_TOKEN, VERCEL_ORG_ID or VERCEL_PROJECT_ID_DASHBOARD; the dashboard is built but not deployed."
+          else
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+
+      # Regenerated rather than shipping the committed copy, so material added
+      # without re-running the generator still appears on the deployed page.
+      - name: Generate dashboard
+        run: |
+          node tools/generate-dashboard.js \
+            --source-base "${{ github.server_url }}/${{ github.repository }}/tree/${{ github.ref_name }}"
+
+      - name: Assemble bundle
+        id: bundle
+        run: |
+          staging="$(mktemp -d)"
+          static="$staging/.vercel/output/static"
+          mkdir -p "$static"
+          cp index.html "$static/"
+          for c in Bootstrap "HTML+CSS" JS Lavarel PHPCB PHPNC "ĐA"; do
+            if [ -d "$c/courses" ]; then
+              mkdir -p "$static/$c"
+              cp -R "$c/courses" "$static/$c/"
+            fi
+          done
+          printf '{"version":3}\n' > "$staging/.vercel/output/config.json"
+          echo "dir=$staging" >> "$GITHUB_OUTPUT"
+          echo "Bundle: $(du -sh "$static" | cut -f1) across $(find "$static" -type f | wc -l) files"
+
+      - name: Deploy to Vercel
+        if: steps.creds.outputs.configured == 'true'
+        working-directory: ${{ steps.bundle.outputs.dir }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_DASHBOARD }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          npm install --global vercel@56.4.1 --ignore-scripts
+          vercel deploy --prebuilt --prod --yes --token="$VERCEL_TOKEN"
