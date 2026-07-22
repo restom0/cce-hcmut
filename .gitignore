@@ -34,7 +34,22 @@ JS/project/myproject1/dist/
 **/storage/logs/*.log
 **/bootstrap/cache/*.php
 
+# Local code index (196 MB SQLite), rebuilt per machine by `codegraph init`.
+.codegraph/
+
+# CI and tooling output produced when the workflows are run locally.
+_packages/
+coverage/
+.phpunit.result.cache
+.php-cs-fixer.cache
+composer.phar
+
+# The two Angular projects were committed as .zip alongside their extracted
+# source; both archives were >99% node_modules. Keep them from coming back.
+JS/project/*.zip
+
 # Misc
 npm-debug.log*
 yarn-error.log
+*.log
 *.cache
