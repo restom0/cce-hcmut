@@ -53,7 +53,7 @@ jobs:
             project_id_secret: VERCEL_PROJECT_ID_MYPROJECT1
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
 
       # Fail loudly but early if the deploy has never been configured, rather
       # than after a full Angular build.
@@ -71,17 +71,20 @@ jobs:
             echo "configured=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         if: matrix.build
         with:
           node-version: ${{ matrix.node }}
           cache: npm
           cache-dependency-path: ${{ matrix.dir }}/package-lock.json
 
+      # --ignore-scripts blocks lifecycle scripts from every transitive
+      # dependency at install time. Verified both Angular apps still install
+      # and build with it, so nothing here relies on a postinstall.
       - name: Install dependencies
         if: matrix.build
         working-directory: ${{ matrix.dir }}
-        run: npm ci
+        run: npm ci --ignore-scripts
 
       - name: Build
         if: matrix.build
@@ -109,14 +112,17 @@ jobs:
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets[matrix.project_id_secret] }}
+          # Expanded here rather than inside the run block, so the token never
+          # becomes part of the generated shell script.
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
-          npm install --global vercel@latest
+          npm install --global vercel@56.4.1 --ignore-scripts
           staging="$(mktemp -d)"
           mkdir -p "$staging/.vercel/output/static"
           cp -R "${{ matrix.output }}/." "$staging/.vercel/output/static/"
           printf '{"version":3}\n' > "$staging/.vercel/output/config.json"
           cd "$staging"
-          vercel deploy --prebuilt --prod --yes --token="${{ secrets.VERCEL_TOKEN }}"
+          vercel deploy --prebuilt --prod --yes --token="$VERCEL_TOKEN"
 
       # html-css has no build step: it is already a static directory, and a
       # plain deploy serves it as-is while honouring its .vercelignore.
@@ -125,7 +131,8 @@ jobs:
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets[matrix.project_id_secret] }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
-          npm install --global vercel@latest
+          npm install --global vercel@56.4.1 --ignore-scripts
           vercel deploy "${{ matrix.output }}" \
-            --prod --yes --token="${{ secrets.VERCEL_TOKEN }}"
+            --prod --yes --token="$VERCEL_TOKEN"

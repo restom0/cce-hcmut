@@ -12,7 +12,11 @@ RUN apt-get update \
 
 # index.php sits at the tree root, so the default document root is correct.
 WORKDIR /var/www/html
-COPY . .
+# Explicit allowlist rather than "COPY . ." so nothing new in the build
+# context is shipped by accident.
+COPY css ./css
+COPY pluto-1.0.0 ./pluto-1.0.0
+COPY connect.php header.php index.php menuleft.php template.php style.css ./
 RUN chown -R www-data:www-data /var/www/html
 
 EXPOSE 80
