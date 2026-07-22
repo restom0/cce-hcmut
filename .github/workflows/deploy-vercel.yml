@@ -60,7 +60,7 @@ jobs:
             project_id_secret: VERCEL_PROJECT_ID_MYPROJECT1
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
 
       # Fail loudly but early if the deploy has never been configured, rather
       # than after a full Angular build.
@@ -78,7 +78,7 @@ jobs:
             echo "configured=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         if: matrix.build
         with:
           node-version: ${{ matrix.node }}
@@ -116,14 +116,15 @@ jobs:
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets[matrix.project_id_secret] }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
-          npm install --global vercel@latest
+          npm install --global vercel@56.4.1 --ignore-scripts
           staging="$(mktemp -d)"
           mkdir -p "$staging/.vercel/output/static"
           cp -R "${{ matrix.output }}/." "$staging/.vercel/output/static/"
           printf '{"version":3}\n' > "$staging/.vercel/output/config.json"
           cd "$staging"
-          vercel deploy --prebuilt --prod --yes --token="${{ secrets.VERCEL_TOKEN }}"
+          vercel deploy --prebuilt --prod --yes --token="$VERCEL_TOKEN"
 
       # html-css has no build step: it is already a static directory, and a
       # plain deploy serves it as-is while honouring its .vercelignore.
@@ -132,10 +133,11 @@ jobs:
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets[matrix.project_id_secret] }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
-          npm install --global vercel@latest
+          npm install --global vercel@56.4.1 --ignore-scripts
           vercel deploy "${{ matrix.output }}" \
-            --prod --yes --token="${{ secrets.VERCEL_TOKEN }}"
+            --prod --yes --token="$VERCEL_TOKEN"
 
   # The dashboard is the site root: an index of every course, its lectures and
   # its labs. The lecture PDFs are shipped alongside it so those links resolve;
@@ -146,7 +148,7 @@ jobs:
     name: dashboard
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
 
       - name: Check Vercel credentials
         id: creds
@@ -162,7 +164,7 @@ jobs:
             echo "configured=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           node-version: '24'
 
