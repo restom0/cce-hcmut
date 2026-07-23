@@ -24,7 +24,7 @@ class PageController extends Controller
         $pro_product = Product::where("promotion_price", "!=", 0)->paginate(8);
         return view("page.trangchu", compact("slide", "new_product", "pro_product"));
     }
-    function getLoaisanpham($type)
+    public function getLoaisanpham($type)
     {
         $loai = ProductType::where("id", "=", $type)->first();
 
@@ -49,7 +49,7 @@ class PageController extends Controller
             ->get();
         return view("page.chitiet_sanpham", compact("sanpham", "sp_tuongtu", "sp_moi", "sp_banchay"));
     }
-    function get_chitietsanpham($id)
+    public function get_chitietsanpham($id)
     {
         $sanpham = Product::where("id", "=", $id)->first();
         $sp_tuongtu = Product::where("id_type", "=", $sanpham->id_type)->paginate(3);

@@ -4,7 +4,7 @@ require_once "Models/model_hangsua.php";
 class hangsua
 {
     private $model = null;
-    function __construct()
+    public function __construct()
     {
         $this->model = new model_hangsua();
         //chức năng mặc định
@@ -35,21 +35,21 @@ class hangsua
         }
         //$this->$act;
     }
-    function index()
+    public function index()
     {
         $list = $this->model->listrecords();
         $page_title = "Danh sách hãng sữa";
         $page_files = "views/hangsua/list.php";
         require_once("layout.php");
     }
-    function addnew()
+    public function addnew()
     {
         $page_title = "Thêm Hãng Sữa";
         $page_files = "views/hangsua/addnew.php";
         require_once("layout.php");
     }
 
-    function store()
+    public function store()
     {
         $ma = $_POST["mahang"];
         $ten = $_POST["tenhang"];
@@ -68,7 +68,7 @@ class hangsua
             header("location: " . ROOT_URL . "/?ctrl=hangsua");
         }
     }
-    function edit()
+    public function edit()
     {
         $ma = $_GET["ma"];
         $row = $this->model->detailrecord($ma);
@@ -76,7 +76,7 @@ class hangsua
         $page_files = "views/hangsua/edit.php";
         require_once("layout.php");
     }
-    function update()
+    public function update()
     {
         $ma = $_POST["mahang"];
         $ten = $_POST["tenhang"];
@@ -91,7 +91,7 @@ class hangsua
         }
         header("location: " . ROOT_URL . "/?ctrl=hangsua");
     }
-    function delete()
+    public function delete()
     {
         $ma = $_GET["ma"];
         $sql = "select * from sua where ma_hang_sua=?";

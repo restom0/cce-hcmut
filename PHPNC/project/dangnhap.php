@@ -12,7 +12,7 @@
             </td>
             <td width="54%">
                 <span class="style10">
-                    <input name="ten_dn" type="text" id="ten_dn" size="15" />
+                    <input name="ten_dn" type="text" id="ten_dn" size="15" aria-label="Ten dang nhap" />
                 </span>
             </td>
         </tr>
@@ -21,16 +21,16 @@
                 <div class="style10">Mật khẩu: </div>
             </td>
             <td><span class="style10">
-                    <input name="mat_khau" type="password" id="mat_khau" size="15" />
+                    <input name="mat_khau" type="password" id="mat_khau" size="15" aria-label="Mat khau" />
                 </span>
             </td>
         </tr>
         <tr>
             <td colspan="2">
                 <div align="center">
-                    <label>
-                        <input type="submit" name="Submit" value="Đăng nhập" />
-                    </label>
+                    <span>
+                        <button type="submit" name="Submit">Đăng nhập</button>
+                    </span>
                 </div>
             </td>
         </tr>

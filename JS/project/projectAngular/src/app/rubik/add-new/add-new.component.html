@@ -2,12 +2,12 @@
 <mat-dialog-content class="mat-typography">
   <mat-form-field class="example-full-width" appearance="fill">
     <mat-label>Tên Sản phẩm</mat-label>
-    <input matInput>
+    <input id="product-name" matInput>
   </mat-form-field>
 
   <mat-form-field appearance="fill">
     <mat-label>Loại Sản phẩm</mat-label>
-    <mat-select [disabled]="disableSelect.value">
+    <mat-select id="product-type" [disabled]="disableSelect.value">
       <mat-option value="option1">2x2</mat-option>
       <mat-option value="option2">3x3</mat-option>
       <mat-option value="option3">4x4</mat-option>
@@ -22,17 +22,17 @@
 
   <mat-form-field class="example-full-width" appearance="fill">
     <mat-label>Mô tả sản phẩm</mat-label>
-    <textarea matInput></textarea>
+    <textarea id="product-description" matInput></textarea>
   </mat-form-field>
 
   <mat-form-field class="example-full-width" appearance="fill">
     <mat-label>Số lượng nhập kho</mat-label>
-    <input type="number" matInput>
+    <input id="product-quantity" type="number" matInput>
   </mat-form-field>
 
   <mat-form-field class="example-full-width" appearance="fill">
     <mat-label>Giá bán</mat-label>
-    <input type="number" matInput>
+    <input id="product-price" type="number" matInput>
   </mat-form-field>
 
 </mat-dialog-content>

@@ -7,11 +7,11 @@ use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
-    function getLogin()
+    public function getLogin()
     {
         return view('Admin.login');
     }
-    function postLogin(Request $req)
+    public function postLogin(Request $req)
     {
         $vali = $req->validate([
             'email' => 'required',
@@ -26,17 +26,17 @@ class AdminController extends Controller
             return redirect('login')->with('thongbao', 'Đăng nhập không thành công');
         }
     }
-    function getProfileUser()
+    public function getProfileUser()
     {
         $user = Auth::user();
         return view('Admin.User.sua', compact('user'));
     }
-    function getDashboard()
+    public function getDashboard()
     {
         $user = Auth::user();
         return view('admin.dashboard', compact('user'));
     }
-    function getLogout()
+    public function getLogout()
     {
         Auth::logout();
         return redirect('login');

@@ -4,7 +4,7 @@ if ($list == null) {
     exit;
 }
 ?>
-<table border="0" width="100%" cellspacing="5" cellpadding="0" align="center">
+<table role="presentation" border="0" width="100%" cellspacing="5" cellpadding="0" align="center">
     <caption></caption>
     <?php
     $i = 0;

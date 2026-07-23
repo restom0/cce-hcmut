@@ -16,11 +16,11 @@ class PageController extends Controller
         $tinlienquan = TinTuc::where("idLoaiTin", $tintuc->idLoaiTin)->take(4)->get();
         return view("front.pages.tintuc", compact("tintuc", 'tinnoibat', 'tinlienquan'));
     }
-    function get_dangnhap()
+    public function get_dangnhap()
     {
         return view("front. pages. dangnhap");
     }
-    function post_dangnhap(Request $req)
+    public function post_dangnhap(Request $req)
     {
         $validate = $req->validate([
             'email' => 'required',
@@ -35,12 +35,12 @@ class PageController extends Controller
             return back()->with("thongbao", "Dang nhap that bai");
         }
     }
-    function get_dangxuat()
+    public function get_dangxuat()
     {
         Auth::logout();
         return view('front.pages.trangchu');
     }
-    function post_comment(Request $req, $id)
+    public function post_comment(Request $req, $id)
     {
         $val = $req->validate([
             'noidung' => 'required'
@@ -55,12 +55,12 @@ class PageController extends Controller
         $comment->save();
         return redirect()->route('tintuc', [$id, $tintuc->TieuDeKhongDau]);
     }
-    function get_nguoidung()
+    public function get_nguoidung()
     {
         $user = Auth::user();
         return view("front.pages.nguoidung", compact("user"));
     }
-    function post_nguoidung(Request $req)
+    public function post_nguoidung(Request $req)
     {
         $val = $req->validate([
             'name' => 'required|min:3'
@@ -85,11 +85,11 @@ class PageController extends Controller
         $user->save();
         return back()->with("thongbao", "Bạn đã cập nhật thành công");
     }
-    function get_dangky()
+    public function get_dangky()
     {
         return view("front.pages.dangky");
     }
-    function post_dangky(Request $req)
+    public function post_dangky(Request $req)
     {
         $validate = $req->validate(
             [
@@ -119,7 +119,7 @@ class PageController extends Controller
         $user->save();
         return redirect()->route("dangky")->with("thongbao", "chic ming ban da dang ky thanh céng");
     }
-    function get_timkiem()
+    public function get_timkiem()
     {
         $tukhoa = $_GET["tukhoa"];
         $tintuc = TinTuc::where('TieuDe', 'like', "%$tukhoa%")
@@ -127,7 +127,7 @@ class PageController extends Controller
             ->orWhere("NoiDung", "like", "%$tukhoa%")->paginate(5);
         return view("front.pages.timkiem", compact("tintuc", "tukhoa"));
     }
-    function post_timkiem(Request $req)
+    public function post_timkiem(Request $req)
     {
         $tukhoa = $req->tukhoa;
         $tintuc = TinTuc::where('TieuDe', 'like', "%$tukhoa%")

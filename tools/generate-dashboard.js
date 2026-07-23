@@ -27,8 +27,8 @@ const isDir = (p) => { try { return fs.statSync(p).isDirectory(); } catch { retu
 const exists = (p) => fs.existsSync(p);
 
 const esc = (s) => String(s)
-  .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-  .replace(/"/g, '&quot;');
+  .replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
+  .replaceAll('"', '&quot;');
 
 // Directory names include "+" and Vietnamese characters; encodeURI keeps path
 // separators intact while escaping the rest.
@@ -41,8 +41,13 @@ const href = (p) => encodeURI(p);
 // cannot be served there and a .md would download rather than render — so CI
 // passes --source-base and those links go to GitHub instead. PDFs stay
 // relative either way, because they are shipped.
+const stripTrailingSlashes = (s) => {
+  let end = s.length;
+  while (end > 0 && s[end - 1] === '/') end -= 1;
+  return s.slice(0, end);
+};
 const baseArg = process.argv.indexOf('--source-base');
-const SOURCE_BASE = baseArg !== -1 ? (process.argv[baseArg + 1] || '').replace(/\/+$/, '') : '';
+const SOURCE_BASE = baseArg !== -1 ? stripTrailingSlashes(process.argv[baseArg + 1] || '') : '';
 const srcHref = (p) => (SOURCE_BASE ? SOURCE_BASE + '/' + encodeURI(p) : encodeURI(p));
 
 function readCourse(c) {

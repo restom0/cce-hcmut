@@ -7,16 +7,16 @@ use App\Models\Slide;
 
 class SlideController extends Controller
 {
-    function get_danhsach_sl()
+    public function get_danhsach_sl()
     {
         $slide = Slide::all();
         return view('Admin.Slide.danhsach', compact('slide'));
     }
-    function get_themds_sl()
+    public function get_themds_sl()
     {
         return view('Admin.Slide.them');
     }
-    function post_themds_sl(Request $req)
+    public function post_themds_sl(Request $req)
     {
         $validate = $req->validate([
             'noidungslide' => 'required'
@@ -47,12 +47,12 @@ class SlideController extends Controller
         return redirect('admin/slide/danhsach')->with('thongbao', 'Thêm Thành công');
     }
     //Sửa
-    function get_suads_sl($id)
+    public function get_suads_sl($id)
     {
         $slide = Slide::find($id);
         return view('Admin.Slide.sua', compact('slide'));
     }
-    function post_suads_sl(Request $req, $id)
+    public function post_suads_sl(Request $req, $id)
     {
         $validate = $req->validate([
             'noidungslide' => 'required'
@@ -82,7 +82,7 @@ class SlideController extends Controller
         return redirect('admin/slide/danhsach')->with('thongbao', 'Sửa Thành công');
     }
     //Xóa
-    function xoa_sl($id)
+    public function xoa_sl($id)
     {
         $tl = Slide::find($id);
         $tl->delete();

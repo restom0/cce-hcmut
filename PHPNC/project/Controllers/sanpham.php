@@ -4,7 +4,7 @@ require_once "Models/model_sanpham.php";
 class sanpham
 {
     private $model = null;
-    function __construct()
+    public function __construct()
     {
         $this->model = new model_sanpham();
          //chức năng mặc định
@@ -22,7 +22,7 @@ class sanpham
         }
     }
 
-    function listproduct()
+    public function listproduct()
     {
         $list = $this->model->listrecords();
         $page_title = "";
@@ -30,7 +30,7 @@ class sanpham
         require_once("layout.php");
     }
 
-    function detail()
+    public function detail()
     {
         $ma = $_GET["ma"];
         $row = $this->model->detailrecord($ma);

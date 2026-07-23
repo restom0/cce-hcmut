@@ -7,17 +7,17 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    function get_danhsach_usr()
+    public function get_danhsach_usr()
     {
         $user = User::all();
         return view('admin.User.danhsach', compact('user'));
     }
-    function get_suads_usr($id)
+    public function get_suads_usr($id)
     {
         $user = User::find($id);
         return view('Admin.User.sua', compact('user'));
     }
-    function post_suads_usr(Request $req)
+    public function post_suads_usr(Request $req)
     {
         $vali = $req->validate([
             'quyen' => 'required'
@@ -29,11 +29,11 @@ class UserController extends Controller
         $user->save();
         return redirect('admin/user/danhsach')->with('thongbao', 'Sửa quyền User Thành công');
     }
-    function get_themds_usr()
+    public function get_themds_usr()
     {
         return view('admin.User.them');
     }
-    function post_themds_usr(Request $req)
+    public function post_themds_usr(Request $req)
     {
         $vali = $req->validate([
             'username' => 'required',
@@ -58,7 +58,7 @@ class UserController extends Controller
         $user->save();
         return redirect('admin/user/danhsach')->with('thongbao', 'Thêm User Thành công');
     }
-    function xoa_usr($id)
+    public function xoa_usr($id)
     {
         $user = User::find($id);
         $user->delete();

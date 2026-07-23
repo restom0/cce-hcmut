@@ -70,18 +70,18 @@ class Admincontroller extends Controller
         }
         return redirect("admin/index");
     }
-    function getdsUser()
+    public function getdsUser()
     {
         $users = User::all();
         return view('admin.danhsachnguoidung', compact('users'));
     }
-    function getThemUser()
+    public function getThemUser()
     {
 
         return view('admin.themnguoidung');
     }
 
-    function postThemUser(Request $req)
+    public function postThemUser(Request $req)
     {
         $req->validate([
             "fullname" => "required",
@@ -120,13 +120,13 @@ class Admincontroller extends Controller
         return redirect()->back()->with('thongbao', 'Thêm người dùng thành công');
     }
 
-    function getSuaUser($id)
+    public function getSuaUser($id)
     {
         $user = User::find($id);
 
         return view('admin.suanguoidung', compact('user'));
     }
-    function postSuaUser(Request $req)
+    public function postSuaUser(Request $req)
     {
 
         $req->validate([
@@ -167,7 +167,7 @@ class Admincontroller extends Controller
         return redirect()->back()->with('thongbao', 'Sửa người dùng thành công');
     }
 
-    function xoaUser($id)
+    public function xoaUser($id)
     {
 
         $user = User::find($id);
@@ -302,17 +302,17 @@ class Admincontroller extends Controller
         }
         return redirect()->back()->with("thongbao", "Đã xóa khách hàng thành công");
     }
-    function getDanhSachSanPham()
+    public function getDanhSachSanPham()
     {
         $products = Product::with('productType')->paginate(5);
         return view('admin.danhsachsanpham', compact('products'));
     }
-    function getThemSanPham()
+    public function getThemSanPham()
     {
         $type_pro = ProductType::all();
         return view('admin.themsanpham', compact('type_pro'));
     }
-    function postThemSanPham(Request $req)
+    public function postThemSanPham(Request $req)
     {
         // Validation rules
         $req->validate([
@@ -379,13 +379,13 @@ class Admincontroller extends Controller
         // Redirect back with a success message
         return redirect()->back()->with('thongbao', 'Thêm thành công');
     }
-    function getSuaSanpham($id)
+    public function getSuaSanpham($id)
     {
         $product = Product::find($id);
         $type_pro = ProductType::all();
         return view('admin.suasanpham', compact('product', 'type_pro'));
     }
-    function postSuaSanpham(Request $req)
+    public function postSuaSanpham(Request $req)
     {
         $req->validate([
             "namePro" => "required",
@@ -445,23 +445,23 @@ class Admincontroller extends Controller
 
         return redirect()->back()->with('thongbao', 'Sửa sản phẩm thành công');
     }
-    function xoaSanPham($id)
+    public function xoaSanPham($id)
     {
         $pro = Product::find($id);
         $pro->delete();
         return redirect()->back()->with('thongbao', "Xóa Sản phẩm thành công");
     }
-    function getdsSlide()
+    public function getdsSlide()
     {
         $slides = Slide::all();
         return view('admin.danhsachslide', compact('slides'));
     }
 
-    function getThemSlide()
+    public function getThemSlide()
     {
         return view('admin.themslide');
     }
-    function postThemSlide(Request $req)
+    public function postThemSlide(Request $req)
     {
 
         $slide = new Slide();
@@ -494,13 +494,13 @@ class Admincontroller extends Controller
         $slide->save();
         return redirect()->back()->with('thongbao', 'Thêm Silde Thành công');
     }
-    function getSuaSlide($id)
+    public function getSuaSlide($id)
     {
         $slide = Slide::find($id);
 
         return view('admin.suaslide', compact('slide'));
     }
-    function postSuaSlide(Request $req)
+    public function postSuaSlide(Request $req)
     {
 
         $slide = Slide::find($req->id);
@@ -533,7 +533,7 @@ class Admincontroller extends Controller
         return redirect()->back()->with('thongbao', 'Sửa Silde Thành công');
     }
 
-    function xoaSlide($id)
+    public function xoaSlide($id)
     {
         $slide = Slide::find($id);
 

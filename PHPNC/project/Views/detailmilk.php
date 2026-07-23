@@ -1,4 +1,4 @@
-<table width="80%" border="0" cellpadding="0" cellspacing="0" align="center">
+<table role="presentation" width="80%" border="0" cellpadding="0" cellspacing="0" align="center">
     <caption></caption>
     <tr>
         <?php

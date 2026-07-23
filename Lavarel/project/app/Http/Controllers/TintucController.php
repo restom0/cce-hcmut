@@ -15,13 +15,13 @@ class TintucController extends Controller
 
         return view("admin/tintuc/danhsach", compact("tintuc"));
     }
-    function them()
+    public function them()
     {
         $theloai = Theloai::all();
         $loaitin = Loaitin::all();
         return view('Admin.TinTuc.them', ['theloai' => $theloai, 'loaitin' => $loaitin]);
     }
-    function xulythem(Request $req)
+    public function xulythem(Request $req)
     {
         $validate = $req->validate([
             'loaitin' => 'required',
@@ -64,21 +64,21 @@ class TintucController extends Controller
         $tintuc->save();
         return redirect('admin/tintuc/danhsach')->with('thongbao', 'Thêm Thành công');
     }
-    function getLoaitin($idtl)
+    public function getLoaitin($idtl)
     {
         $loaitin = Loaitin::where('idTheLoai', $idtl)->get();
         foreach ($loaitin as $lt) {
             echo "<option value='>" . $lt->id . "'>" . $lt->Ten . "</option>";
         }
     }
-    function sua($id)
+    public function sua($id)
     {
         $tintuc = Tintuc::find($id);
         $loaitin = LoaiTin::all();
         $theloai = Theloai::all();
         return view('Admin.TinTuc.sua', compact('tintuc', 'loaitin', 'theloai'));
     }
-    function xulysua(Request $req, $id)
+    public function xulysua(Request $req, $id)
     {
         $validate = $req->validate([
             'loaitin' => 'required',
@@ -118,7 +118,7 @@ class TintucController extends Controller
         $tintuc->save();
         return redirect('admin/tintuc/danhsach')->with('thongbao', 'Sửa Thành công');
     }
-    function xulyxoa($id)
+    public function xulyxoa($id)
     {
         $tl = Tintuc::find($id);
         $tl->delete();

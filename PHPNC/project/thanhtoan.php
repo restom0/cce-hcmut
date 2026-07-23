@@ -8,9 +8,9 @@
     <tr>
         <td valign="top">
             <div align="center" class="style10">
-                <img src="hinh_anh/IconCardMasterCard.gif" width="37" height="23" />
-                <img src="hinh_anh/IconCardVisaE.gif" width="37" height="23" />
-                <img src="hinh_anh/IconCardVisa.gif" width="37" height="23" />
+                <img src="hinh_anh/IconCardMasterCard.gif" width="37" height="23" alt="MasterCard" />
+                <img src="hinh_anh/IconCardVisaE.gif" width="37" height="23" alt="Visa Electron" />
+                <img src="hinh_anh/IconCardVisa.gif" width="37" height="23" alt="Visa" />
             </div>
         </td>
     </tr>

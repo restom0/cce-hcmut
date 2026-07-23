@@ -4,7 +4,7 @@ require_once "Models/model_trangchu.php";
 class trangchu
 {
     private $model = null;
-    function __construct()
+    public function __construct()
     {
         $this->model = new model_trangchu();
          //chức năng mặc định
@@ -22,7 +22,7 @@ class trangchu
         }
     }
 
-    function index()
+    public function index()
     {
         $list = $this->model->listrecords();
         $page_title = "Danh sách sữa";
@@ -30,7 +30,7 @@ class trangchu
         require_once("layout.php");
     }
 
-    function detail()
+    public function detail()
     {
         $ma = $_GET["ma"];
         $row = $this->model->detailrecord($ma);
