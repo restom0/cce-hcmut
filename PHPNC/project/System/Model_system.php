@@ -40,9 +40,4 @@
         {
             return $this->run($sql, $params);
         }
-        function execute($sql, $params = [], $types = '')
-        {
-            if (!$params) return $this->conn->query($sql);
-            return $this->bind($sql, $params, $types) !== false;
-        }
     }
