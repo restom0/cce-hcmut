@@ -13,6 +13,8 @@ on:
       - 'JS/project/projectAngular/**'
       - 'JS/project/myproject1/**'
       - '.github/workflows/deploy-vercel.yml'
+      - '.github/workflows/package-projects.yml'
+      - '.github/workflows/publish-images.yml'
       # The dashboard indexes the whole repo, so it is rebuilt whenever the
       # material it lists changes.
       - 'index.html'
@@ -174,6 +176,11 @@ jobs:
       # Regenerated rather than shipping the committed copy, so material added
       # without re-running the generator still appears on the deployed page.
       - name: Generate dashboard
+        env:
+          DASHBOARD_URL: https://cce-hcmut.vercel.app/
+          HTML_CSS_URL: ${{ vars.HTML_CSS_URL }}
+          PROJECT_ANGULAR_URL: ${{ vars.PROJECT_ANGULAR_URL }}
+          MYPROJECT1_URL: ${{ vars.MYPROJECT1_URL }}
         run: |
           node tools/generate-dashboard.js \
             --source-base "${{ github.server_url }}/${{ github.repository }}/tree/${{ github.ref_name }}"
