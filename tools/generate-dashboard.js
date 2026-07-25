@@ -33,6 +33,7 @@ const esc = (s) => String(s)
 // Directory names include "+" and Vietnamese characters; encodeURI keeps path
 // separators intact while escaping the rest.
 const href = (p) => encodeURI(p);
+const fileLabel = (f) => path.parse(f).name;
 
 // Where links to browsable source should point.
 //
@@ -133,10 +134,10 @@ function readCourse(c) {
   const cdir = path.join(base, 'courses');
   for (const f of ls(cdir)) {
     if (isDir(path.join(cdir, f))) continue;
-    rec.lectures.push({ label: f.replace(/\.(pdf|pptx)$/i, ''), file: f, href: `${c.dir}/courses/${f}` });
+    rec.lectures.push({ label: fileLabel(f), file: f, href: `${c.dir}/courses/${f}` });
   }
   for (const f of ls(path.join(cdir, 'BaiTap'))) {
-    rec.baitap.push({ label: f.replace(/\.(pdf|pptx)$/i, ''), file: f, href: `${c.dir}/courses/BaiTap/${f}` });
+    rec.baitap.push({ label: fileLabel(f), file: f, href: `${c.dir}/courses/BaiTap/${f}` });
   }
 
   const exdir = path.join(base, 'project', 'exercises');
@@ -167,8 +168,15 @@ function readCourse(c) {
 
     let port = null;
     if (has('docker-compose.yml')) {
-      const m = fs.readFileSync(path.join(pdir, 'docker-compose.yml'), 'utf8').match(/-\s*"(\d+):80"/);
-      if (m) port = m[1];
+      const compose = fs.readFileSync(path.join(pdir, 'docker-compose.yml'), 'utf8');
+      for (const line of compose.split(/\r?\n/)) {
+        const end = line.indexOf(':80"');
+        if (end === -1) continue;
+        let start = end - 1;
+        while (start >= 0 && line[start] >= '0' && line[start] <= '9') start -= 1;
+        port = line.slice(start + 1, end);
+        break;
+      }
     }
     rec.project = { kind, port, href: `${c.dir}/project`, compose: has('docker-compose.yml') };
   }

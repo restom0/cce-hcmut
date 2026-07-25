@@ -1,25 +1,30 @@
 
 <form action="<?= ROOT_URL ?>/?ctrl=hangsua&act=store" method="post">
-    <table role="presentation" style="border:2px groove gray;width:40%; margin:5px auto;" cellpadding="5px">
+    <table style="border:2px groove gray;width:40%; margin:5px auto;" cellpadding="5px">
+        <caption style="position:absolute;left:-9999px;">Them hang sua</caption>
         <tr>
-            <td>Mã Hãng Sữa</td>
-            <td><input type="text" name="mahang" value="" aria-label="Ma hang sua"></td>
+            <th scope="col">Thong tin</th>
+            <th scope="col">Gia tri</th>
         </tr>
         <tr>
-            <td>Tên Hãng Sữa</td>
-            <td><input type="text" name="tenhang" value="" aria-label="Ten hang sua"></td>
+            <td><label for="mahang">Mã Hãng Sữa</label></td>
+            <td><input type="text" id="mahang" name="mahang" value=""></td>
         </tr>
         <tr>
-            <td>Địa chỉ</td>
-            <td><input type="text" name="diachi" value="" aria-label="Dia chi"></td>
+            <td><label for="tenhang">Tên Hãng Sữa</label></td>
+            <td><input type="text" id="tenhang" name="tenhang" value=""></td>
         </tr>
         <tr>
-            <td>Điện thoại</td>
-            <td><input type="text" name="dienthoai" value="" aria-label="Dien thoai"></td>
+            <td><label for="diachi">Địa chỉ</label></td>
+            <td><input type="text" id="diachi" name="diachi" value=""></td>
         </tr>
         <tr>
-            <td>Email</td>
-            <td><input type="text" name="email" value="" aria-label="Email"></td>
+            <td><label for="dienthoai">Điện thoại</label></td>
+            <td><input type="text" id="dienthoai" name="dienthoai" value=""></td>
+        </tr>
+        <tr>
+            <td><label for="email">Email</label></td>
+            <td><input type="text" id="email" name="email" value=""></td>
         </tr>
         <tr align="center">
             <td colspan="2"><button type="submit" name="luutru">Lưu Trữ</button></td>
