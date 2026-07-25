@@ -50,11 +50,13 @@ jobs:
       - name: Generate Angular coverage
         if: steps.creds.outputs.configured == 'true'
         continue-on-error: true
+        timeout-minutes: 20
         run: |
           for app in JS/project/projectAngular JS/project/myproject1; do
             echo "::group::$app"
             ( npm --prefix "$app" ci --ignore-scripts && npm --prefix "$app" run test:ci ) \
               || echo "::warning::Angular tests failed for $app; its coverage will be missing"
+            echo "lcov: $(ls -l "$app/coverage/lcov.info" 2>/dev/null || echo MISSING)"
             echo "::endgroup::"
           done
 
@@ -77,6 +79,7 @@ jobs:
             ( composer --working-dir="$app" install --no-interaction --no-progress --no-scripts \
               && ( cd "$app" && vendor/bin/phpunit --testsuite=Unit --coverage-clover=coverage.xml ) ) \
               || echo "::warning::Laravel tests failed for $app; its coverage will be missing"
+            echo "clover: $(ls -l "$app/coverage.xml" 2>/dev/null || echo MISSING)"
             echo "::endgroup::"
           done
       # ------------------------------------------------------------------------
