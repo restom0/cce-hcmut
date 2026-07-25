@@ -29,6 +29,45 @@ jobs:
             echo "configured=true" >> "$GITHUB_OUTPUT"
           fi
 
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        if: steps.creds.outputs.configured == 'true'
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: |
+            JS/project/projectAngular/package-lock.json
+            JS/project/myproject1/package-lock.json
+
+      - name: Generate Angular coverage
+        if: steps.creds.outputs.configured == 'true'
+        run: |
+          set -euo pipefail
+          for app in JS/project/projectAngular JS/project/myproject1; do
+            npm --prefix "$app" ci --ignore-scripts
+            npm --prefix "$app" run test:ci
+          done
+
+      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        if: steps.creds.outputs.configured == 'true'
+        with:
+          php-version: '8.3'
+          tools: composer:v2
+          coverage: pcov
+
+      - name: Generate Laravel coverage
+        if: steps.creds.outputs.configured == 'true'
+        run: |
+          set -euo pipefail
+          for app in Lavarel/project "ÄA/project"; do
+            composer --working-dir="$app" install --no-interaction --no-progress --no-scripts
+            (
+              cd "$app"
+              cp .env.example .env
+              php artisan key:generate --ansi
+              vendor/bin/phpunit --testsuite=Unit --coverage-clover=coverage.xml
+            )
+          done
+
       # v5 is affected by an argument-injection advisory (Dependabot #385).
       #
       # qualitygate.wait makes the scanner block until SonarCloud has finished
