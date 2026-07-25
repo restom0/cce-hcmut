@@ -3,18 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>cce-hcmut — coursework overview</title>
+<title>cce-hcmut — deploy dashboard</title>
 <style>
   :root {
     color-scheme: light dark;
     --bg: #f6f7f9; --card: #ffffff; --fg: #14161a; --muted: #5c6470;
     --line: #e2e5ea; --accent: #2f6fed; --chip: #eef2f9; --chip-alt: #fdf0e4;
-    --radius: 10px;
+    --ok-bg: #e9f8ef; --ok-fg: #17643a; --radius: 8px;
   }
   @media (prefers-color-scheme: dark) {
     :root {
       --bg: #0f1115; --card: #171a20; --fg: #e7e9ee; --muted: #98a1b0;
       --line: #262b34; --accent: #6c9bff; --chip: #1e232c; --chip-alt: #2a2118;
+      --ok-bg: #13291d; --ok-fg: #72d79b;
     }
   }
   * { box-sizing: border-box; }
@@ -23,11 +24,52 @@
     font: 15px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   }
   .wrap { max-width: 1100px; margin: 0 auto; padding: 32px 20px 64px; }
-  header.top h1 { margin: 0 0 4px; font-size: 1.6rem; letter-spacing: -0.01em; }
+  header.top h1 { margin: 0 0 4px; font-size: 1.6rem; letter-spacing: 0; }
   header.top p { margin: 0; color: var(--muted); }
   .stats { display: flex; gap: 18px; flex-wrap: wrap; margin: 18px 0 0; padding: 0; list-style: none; }
   .stats li { color: var(--muted); font-size: .9rem; }
   .stats b { color: var(--fg); font-size: 1.05rem; }
+  .deploy-section { margin-top: 26px; }
+  .section-head { display: flex; gap: 14px; justify-content: space-between; flex-wrap: wrap; align-items: end; }
+  .section-head h2 { margin: 0; font-size: 1.05rem; }
+  .eyebrow {
+    margin: 0 0 2px; color: var(--muted); font-size: .72rem;
+    text-transform: uppercase; letter-spacing: 0; font-weight: 700;
+  }
+  .actions, .card-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .button {
+    display: inline-flex; align-items: center; justify-content: center; min-height: 31px;
+    border: 1px solid var(--line); border-radius: 6px; padding: 5px 10px;
+    color: var(--fg); background: var(--card); text-decoration: none; font-size: .82rem;
+  }
+  .button.primary { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+  .button:hover { border-color: var(--accent); }
+  .deploy-grid, .package-grid, .image-grid { display: grid; gap: 12px; margin-top: 12px; }
+  .deploy-card, .package-card, .image-card {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px;
+  }
+  .deploy-card header, .package-card header, .image-card header {
+    display: flex; justify-content: space-between; gap: 10px; align-items: start;
+  }
+  .deploy-card h3, .package-card h3, .image-card h3 { margin: 0; font-size: .98rem; }
+  .deploy-card header p, .package-card header span { margin: 2px 0 0; color: var(--muted); font-size: .8rem; }
+  .status {
+    display: inline-flex; align-items: center; min-height: 24px; padding: 2px 8px;
+    border-radius: 999px; color: var(--ok-fg); background: var(--ok-bg); font-size: .75rem;
+  }
+  .kv { display: grid; gap: 7px; margin: 12px 0 0; }
+  .kv.compact { gap: 5px; }
+  .kv div { display: grid; grid-template-columns: 70px minmax(0, 1fr); gap: 10px; align-items: baseline; }
+  .kv dt { color: var(--muted); font-size: .75rem; }
+  .kv dd { margin: 0; min-width: 0; color: var(--fg); font-size: .8rem; overflow-wrap: anywhere; }
+  .path, .image-card code {
+    color: var(--fg); font: .78rem/1.4 ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+    overflow-wrap: anywhere;
+  }
+  .image-grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .image-card header a { color: var(--accent); text-decoration: none; font-size: .78rem; }
+  .image-card header a:hover { text-decoration: underline; }
+  .image-card code { display: block; margin-top: 8px; background: var(--chip); border-radius: 6px; padding: 7px; }
   .search { margin: 24px 0 8px; }
   .search input {
     width: 100%; padding: 10px 12px; font: inherit; color: inherit;
@@ -52,13 +94,13 @@
   }
   .tag.muted { opacity: .8; }
   .run { margin: 12px 0 0; font-size: .85rem; color: var(--muted); }
-  .run-label { text-transform: uppercase; letter-spacing: .06em; font-size: .7rem; margin-right: 6px; }
+  .run-label { text-transform: uppercase; letter-spacing: 0; font-size: .7rem; margin-right: 6px; }
   .run code { background: var(--chip); padding: 2px 6px; border-radius: 5px; color: var(--fg); }
   .port { margin-left: 8px; color: var(--accent); }
   .row { margin-top: 14px; }
   .row h3 {
     margin: 0 0 7px; font-size: .72rem; text-transform: uppercase;
-    letter-spacing: .07em; color: var(--muted); font-weight: 600;
+    letter-spacing: 0; color: var(--muted); font-weight: 600;
   }
   .row h3 .n { opacity: .65; margin-left: 4px; }
   ul.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
@@ -82,24 +124,224 @@
   .note { margin-top: 28px; color: var(--muted); font-size: .82rem; }
   .note code { background: var(--chip); padding: 1px 5px; border-radius: 4px; }
   #none { color: var(--muted); display: none; }
+  .visually-hidden { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+  @media (min-width: 720px) {
+    .deploy-grid { grid-template-columns: repeat(2, 1fr); }
+    .package-grid { grid-template-columns: repeat(3, 1fr); }
+  }
   @media (min-width: 860px) { .grid { grid-template-columns: repeat(2, 1fr); } }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="top">
-    <h1>cce-hcmut</h1>
-    <p>Coursework across seven web-development subjects.</p>
+    <h1>cce-hcmut deploy dashboard</h1>
+    <p>One place for the live Vercel UI targets, downloadable deploy packages, container images, and coursework catalog.</p>
     <ul class="stats">
       <li><b>7</b> courses</li>
+      <li><b>4</b> UI deploys</li>
+      <li><b>5</b> archives</li>
+      <li><b>4</b> images</li>
       <li><b>65</b> lectures &amp; sheets</li>
       <li><b>39</b> labs</li>
     </ul>
   </header>
 
+  <section class="deploy-section" aria-labelledby="deploy-title">
+  <div class="section-head">
+    <div>
+      <p class="eyebrow">Deploy UI</p>
+      <h2 id="deploy-title">Vercel surfaces</h2>
+    </div>
+    <div class="actions">
+      <a class="button primary" href="https://github.com/restom0/cce-hcmut/actions/workflows/deploy-vercel.yml">Deploy workflow</a>
+      <a class="button" href="https://github.com/restom0/cce-hcmut">Repository</a>
+    </div>
+  </div>
+  <div class="deploy-grid">
+    <article class="deploy-card">
+  <header>
+    <div>
+      <h3>Dashboard</h3>
+      <p>Vercel static root</p>
+    </div>
+    <span class="status">Live</span>
+  </header>
+  <dl class="kv">
+    <div><dt>Source</dt><dd><a class="path" href="index.html">index.html</a></dd></div>
+    <div><dt>Output</dt><dd>index.html + course PDFs</dd></div>
+    <div><dt>Build</dt><dd>node tools/generate-dashboard.js</dd></div>
+    <div><dt>Secret</dt><dd>VERCEL_PROJECT_ID_DASHBOARD</dd></div>
+  </dl>
+  <footer class="card-actions">
+    <a class="button primary" href="https://cce-hcmut.vercel.app/">Open UI</a>
+    <a class="button" href="index.html">Source</a>
+    <a class="button" href="https://github.com/restom0/cce-hcmut/actions/workflows/deploy-vercel.yml">Deploy job</a>
+  </footer>
+</article>
+<article class="deploy-card">
+  <header>
+    <div>
+      <h3>HTML+CSS</h3>
+      <p>Vercel static UI</p>
+    </div>
+    <span class="status">Configured</span>
+  </header>
+  <dl class="kv">
+    <div><dt>Source</dt><dd><a class="path" href="HTML+CSS/project">HTML+CSS/project</a></dd></div>
+    <div><dt>Output</dt><dd>HTML+CSS/project</dd></div>
+    <div><dt>Build</dt><dd>No build step</dd></div>
+    <div><dt>Secret</dt><dd>VERCEL_PROJECT_ID_HTML_CSS</dd></div>
+  </dl>
+  <footer class="card-actions">
+    <a class="button" href="HTML+CSS/project">Source</a>
+    <a class="button" href="https://github.com/restom0/cce-hcmut/actions/workflows/deploy-vercel.yml">Deploy job</a>
+  </footer>
+</article>
+<article class="deploy-card">
+  <header>
+    <div>
+      <h3>projectAngular</h3>
+      <p>Angular browser bundle</p>
+    </div>
+    <span class="status">Configured</span>
+  </header>
+  <dl class="kv">
+    <div><dt>Source</dt><dd><a class="path" href="JS/project/projectAngular">JS/project/projectAngular</a></dd></div>
+    <div><dt>Output</dt><dd>dist/project-angular/browser</dd></div>
+    <div><dt>Build</dt><dd>npm ci --ignore-scripts; npm run build</dd></div>
+    <div><dt>Secret</dt><dd>VERCEL_PROJECT_ID_PROJECT_ANGULAR</dd></div>
+  </dl>
+  <footer class="card-actions">
+    <a class="button" href="JS/project/projectAngular">Source</a>
+    <a class="button" href="https://github.com/restom0/cce-hcmut/actions/workflows/deploy-vercel.yml">Deploy job</a>
+  </footer>
+</article>
+<article class="deploy-card">
+  <header>
+    <div>
+      <h3>myproject1</h3>
+      <p>Angular browser bundle</p>
+    </div>
+    <span class="status">Configured</span>
+  </header>
+  <dl class="kv">
+    <div><dt>Source</dt><dd><a class="path" href="JS/project/myproject1">JS/project/myproject1</a></dd></div>
+    <div><dt>Output</dt><dd>dist/myproject1/browser</dd></div>
+    <div><dt>Build</dt><dd>npm ci --ignore-scripts; npm run build</dd></div>
+    <div><dt>Secret</dt><dd>VERCEL_PROJECT_ID_MYPROJECT1</dd></div>
+  </dl>
+  <footer class="card-actions">
+    <a class="button" href="JS/project/myproject1">Source</a>
+    <a class="button" href="https://github.com/restom0/cce-hcmut/actions/workflows/deploy-vercel.yml">Deploy job</a>
+  </footer>
+</article>
+  </div>
+</section>
+  <section class="deploy-section" aria-labelledby="packages-title">
+  <div class="section-head">
+    <div>
+      <p class="eyebrow">Deploy packages</p>
+      <h2 id="packages-title">Archives and container images</h2>
+    </div>
+    <div class="actions">
+      <a class="button primary" href="https://github.com/restom0/cce-hcmut/actions/workflows/package-projects.yml">Archive workflow</a>
+      <a class="button" href="https://github.com/restom0/cce-hcmut/actions/workflows/publish-images.yml">Image workflow</a>
+      <a class="button" href="https://github.com/restom0/cce-hcmut/releases">Releases</a>
+    </div>
+  </div>
+  <div class="package-grid">
+    <article class="package-card">
+  <header>
+    <h3>lavarel</h3>
+    <span>Laravel archive</span>
+  </header>
+  <dl class="kv compact">
+    <div><dt>Source</dt><dd><a class="path" href="Lavarel/project">Lavarel/project</a></dd></div>
+    <div><dt>Artifact</dt><dd>lavarel-package</dd></div>
+    <div><dt>Release</dt><dd>lavarel.zip</dd></div>
+  </dl>
+</article>
+<article class="package-card">
+  <header>
+    <h3>da</h3>
+    <span>Laravel archive</span>
+  </header>
+  <dl class="kv compact">
+    <div><dt>Source</dt><dd><a class="path" href="%C4%90A/project">ĐA/project</a></dd></div>
+    <div><dt>Artifact</dt><dd>da-package</dd></div>
+    <div><dt>Release</dt><dd>da.zip</dd></div>
+  </dl>
+</article>
+<article class="package-card">
+  <header>
+    <h3>phpnc</h3>
+    <span>PHP archive</span>
+  </header>
+  <dl class="kv compact">
+    <div><dt>Source</dt><dd><a class="path" href="PHPNC/project">PHPNC/project</a></dd></div>
+    <div><dt>Artifact</dt><dd>phpnc-package</dd></div>
+    <div><dt>Release</dt><dd>phpnc.zip</dd></div>
+  </dl>
+</article>
+<article class="package-card">
+  <header>
+    <h3>phpcb</h3>
+    <span>PHP archive</span>
+  </header>
+  <dl class="kv compact">
+    <div><dt>Source</dt><dd><a class="path" href="PHPCB/project">PHPCB/project</a></dd></div>
+    <div><dt>Artifact</dt><dd>phpcb-package</dd></div>
+    <div><dt>Release</dt><dd>phpcb.zip</dd></div>
+  </dl>
+</article>
+<article class="package-card">
+  <header>
+    <h3>bootstrap</h3>
+    <span>Source archive</span>
+  </header>
+  <dl class="kv compact">
+    <div><dt>Source</dt><dd><a class="path" href="Bootstrap/project">Bootstrap/project</a></dd></div>
+    <div><dt>Artifact</dt><dd>bootstrap-package</dd></div>
+    <div><dt>Release</dt><dd>bootstrap.zip</dd></div>
+  </dl>
+</article>
+  </div>
+  <div class="image-grid">
+    <article class="image-card">
+  <header>
+    <h3>lavarel</h3>
+    <a href="Lavarel/project">source</a>
+  </header>
+  <code>ghcr.io/restom0/cce-hcmut/lavarel</code>
+</article>
+<article class="image-card">
+  <header>
+    <h3>da</h3>
+    <a href="%C4%90A/project">source</a>
+  </header>
+  <code>ghcr.io/restom0/cce-hcmut/da</code>
+</article>
+<article class="image-card">
+  <header>
+    <h3>phpnc</h3>
+    <a href="PHPNC/project">source</a>
+  </header>
+  <code>ghcr.io/restom0/cce-hcmut/phpnc</code>
+</article>
+<article class="image-card">
+  <header>
+    <h3>phpcb</h3>
+    <a href="PHPCB/project">source</a>
+  </header>
+  <code>ghcr.io/restom0/cce-hcmut/phpcb</code>
+</article>
+  </div>
+</section>
+
   <div class="search">
-    <label for="q" class="visually-hidden" style="position:absolute;left:-9999px">Filter courses and labs</label>
+    <label for="q" class="visually-hidden">Filter courses and labs</label>
     <input id="q" type="search" placeholder="Filter by course, lecture or lab…" autocomplete="off">
   </div>
 
@@ -167,14 +409,14 @@
     <a href="JS/project">project/</a>
   </footer>
 </article>
-<article class="course" data-search="lavarel laravel laravel 10, mysql buoi_01 buoi_02 buoi_03 buoi_04 buoi_05 buoi_07 buoi_09 buoi_10 buoi_11 buoi_12a buoi_12b buoi_13 buoi_02 buoi-02 web.php buoi-03 web.php buoi-04 buoi04controller.php web.php buoi-06 vidu.cs ql_sinhvien.sql web.php buoi-08 laravel_demo.sql web.php">
+<article class="course" data-search="lavarel laravel laravel 12, mysql buoi_01 buoi_02 buoi_03 buoi_04 buoi_05 buoi_07 buoi_09 buoi_10 buoi_11 buoi_12a buoi_12b buoi_13 buoi_02 buoi-02 web.php buoi-03 web.php buoi-04 buoi04controller.php web.php buoi-06 vidu.cs ql_sinhvien.sql web.php buoi-08 laravel_demo.sql web.php">
   <header class="course-head">
     <div>
       <h2><a href="Lavarel">Lavarel</a></h2>
       <p class="subject">Laravel</p>
     </div>
     <div class="tags">
-      <span class="tag">Laravel 10, MySQL</span>
+      <span class="tag">Laravel 12, MySQL</span>
       <span class="tag muted">Laravel app</span>
     </div>
   </header>
@@ -230,14 +472,14 @@
     <a href="PHPNC/project">project/</a>
   </footer>
 </article>
-<article class="course" data-search="đa đồ án laravel 10, mysql buoi_01 buoi_02 buoi_03 buoi_04 buoi_05 buoi_06 buoi_07 buoi_08 buoi_09 buoi-01 db_banhang_data.sql buoi-02 image.rar buoi-06 admin/">
+<article class="course" data-search="đa đồ án laravel 12, mysql buoi_01 buoi_02 buoi_03 buoi_04 buoi_05 buoi_06 buoi_07 buoi_08 buoi_09 buoi-01 db_banhang_data.sql buoi-02 image.rar buoi-06 admin/">
   <header class="course-head">
     <div>
       <h2><a href="%C4%90A">ĐA</a></h2>
       <p class="subject">Đồ án</p>
     </div>
     <div class="tags">
-      <span class="tag">Laravel 10, MySQL</span>
+      <span class="tag">Laravel 12, MySQL</span>
       <span class="tag muted">Laravel app</span>
     </div>
   </header>

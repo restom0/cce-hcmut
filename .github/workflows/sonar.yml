@@ -29,6 +29,58 @@ jobs:
             echo "configured=true" >> "$GITHUB_OUTPUT"
           fi
 
+      # --- Coverage -----------------------------------------------------------
+      # Sonar only shows coverage if the lcov/clover reports named in
+      # sonar-project.properties already exist when the scanner runs, so the
+      # suites run here in the same job right before the scan. Each step is
+      # continue-on-error and guards every app with `|| echo`: a suite that has
+      # not been touched since the Angular 14->22 upgrade must neither fail the
+      # scan nor stop the other apps from reporting, and whatever coverage was
+      # produced is still picked up. Skipped when SONAR_TOKEN is absent, since
+      # there would be no scan to feed.
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        if: steps.creds.outputs.configured == 'true'
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: |
+            JS/project/projectAngular/package-lock.json
+            JS/project/myproject1/package-lock.json
+
+      - name: Generate Angular coverage
+        if: steps.creds.outputs.configured == 'true'
+        continue-on-error: true
+        run: |
+          for app in JS/project/projectAngular JS/project/myproject1; do
+            echo "::group::$app"
+            ( npm --prefix "$app" ci --ignore-scripts && npm --prefix "$app" run test:ci ) \
+              || echo "::warning::Angular tests failed for $app; its coverage will be missing"
+            echo "::endgroup::"
+          done
+
+      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        if: steps.creds.outputs.configured == 'true'
+        with:
+          php-version: '8.3'
+          tools: composer:v2
+          coverage: pcov
+
+      # The Unit suite is plain PHPUnit (no booted app, no database), so it needs
+      # neither a .env nor an APP_KEY; --no-scripts skips the package discovery
+      # the Unit tests do not use.
+      - name: Generate Laravel coverage
+        if: steps.creds.outputs.configured == 'true'
+        continue-on-error: true
+        run: |
+          for app in "Lavarel/project" "ĐA/project"; do
+            echo "::group::$app"
+            ( composer --working-dir="$app" install --no-interaction --no-progress --no-scripts \
+              && ( cd "$app" && vendor/bin/phpunit --testsuite=Unit --coverage-clover=coverage.xml ) ) \
+              || echo "::warning::Laravel tests failed for $app; its coverage will be missing"
+            echo "::endgroup::"
+          done
+      # ------------------------------------------------------------------------
+
       # v5 is affected by an argument-injection advisory (Dependabot #385).
       #
       # qualitygate.wait makes the scanner block until SonarCloud has finished

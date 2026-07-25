@@ -1,5 +1,9 @@
-<table role="presentation" width="80%" border="0" cellpadding="0" cellspacing="0" align="center">
-    <caption></caption>
+<table width="80%" border="0" cellpadding="0" cellspacing="0" align="center">
+    <caption style="position:absolute;left:-9999px;">Chi tiet san pham</caption>
+    <tr>
+        <th scope="col" style="position:absolute;left:-9999px;">Hinh san pham</th>
+        <th scope="col" style="position:absolute;left:-9999px;">Thong tin san pham</th>
+    </tr>
     <tr>
         <?php
         echo "<td width='30%' style='text-align:center;'>";

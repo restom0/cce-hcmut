@@ -4,8 +4,11 @@ if ($list == null) {
     exit;
 }
 ?>
-<table role="presentation" border="0" width="100%" cellspacing="5" cellpadding="0" align="center">
-    <caption></caption>
+<table border="0" width="100%" cellspacing="5" cellpadding="0" align="center">
+    <caption style="position:absolute;left:-9999px;">Danh sach sua</caption>
+    <tr>
+        <th scope="col" colspan="5" style="position:absolute;left:-9999px;">San pham sua</th>
+    </tr>
     <?php
     $i = 0;
     foreach ($list as $row) {
