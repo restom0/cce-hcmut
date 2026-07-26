@@ -10,7 +10,7 @@ class sanpham
          //chức năng mặc định
         $action = "sanpham";
         //tiếp nhận chức năng user request
-        if (isset($_GET["action"])) $action = $_GET["action"];
+        if (isset($_GET["action"])) { $action = $_GET["action"]; }
         switch ($action) {
             case "sanpham":
                 $this->listproduct();
@@ -27,7 +27,7 @@ class sanpham
         $list = $this->model->listrecords();
         $page_title = "";
         $page_files = "Views/sanpham/list.php";
-        require_once("layout.php");
+        require_once "layout.php";
     }
 
     public function detail()
@@ -36,7 +36,7 @@ class sanpham
         $row = $this->model->detailrecord($ma);
         $page_title = "";
         $page_files = "views/sanpham/detail.php";
-        require_once("layout.php");
+        require_once "layout.php";
     }
 
 }

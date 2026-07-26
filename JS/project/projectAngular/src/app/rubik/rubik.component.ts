@@ -16,8 +16,6 @@ export class RubikComponent implements AfterViewInit {
 
   constructor(public dialog: MatDialog) { }
 
-  ngOnInit(): void {
-  }
   displayedColumns: string[] = ['position', 'tenSP', 'loai', 'moTa', 'soLuong', 'giaBan'];
   dataSource = new MatTableDataSource<PeriodicElement>(ELEMENT_DATA);
   selection = new SelectionModel<PeriodicElement>(true, []);

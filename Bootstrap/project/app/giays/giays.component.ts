@@ -1,4 +1,3 @@
-import { OnInit } from '@angular/core';
 import { Component } from '@angular/core';
 import { ApiService } from '../api.service';
 import { Giay } from '../giay';
@@ -9,7 +8,7 @@ import { Giay } from '../giay';
   templateUrl: './giays.component.html',
   styleUrls: ['./giays.component.css']
 })
-export class GiaysComponent implements OnInit  {
+export class GiaysComponent {
   giays?: Giay[];
 
 	constructor(private apiService: ApiService) {
@@ -17,9 +16,6 @@ export class GiaysComponent implements OnInit  {
 		this.giays = giays;
 		//console.log(this.giays);
 	}) }
-	ngOnInit()
-	{
-	}
 
 
 }

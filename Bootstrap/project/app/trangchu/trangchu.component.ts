@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-trangchu',
   templateUrl: './trangchu.component.html',
   styleUrls: ['./trangchu.component.css']
 })
-export class TrangchuComponent implements OnInit{
+export class TrangchuComponent {
     dsphongcanh = [
       {hinh: "dl1.jpg", mota:"Quảng trường Lâm Viên là một trong các địa danh nổi tiếng ở Đà Lạt, nằm trên con đường Trần Quốc Toản."},
       {hinh: "dl2.jpg", mota:"Nằm cách trung tâm thành phố Đà Lạt khoảng 20km, đồi chè Cầu Đất là một trong những địa điểm du lịch nổi tiếng nhất nhì Lâm Đồng"},
@@ -14,7 +14,4 @@ export class TrangchuComponent implements OnInit{
       {hinh: "dl5.jpg", mota:"Hồ Xuân Hương không chỉ là phong cảnh Đà Lạt nổi tiếng mà còn là biểu tượng du lịch của thành phố."},    
     ];
     constructor() {}
-    ngOnInit(): void {
-      
-    }
 }

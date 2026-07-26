@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import {FormControl} from "@angular/forms";
 @Component({
     selector: 'app-add-new',
@@ -8,11 +8,9 @@ import {FormControl} from "@angular/forms";
     standalone: false
 })
 
-export class AddNewComponent implements OnInit {
+export class AddNewComponent {
 
   constructor() { }
 
-  ngOnInit(): void {
-  }
   disableSelect = new FormControl(false);
 }

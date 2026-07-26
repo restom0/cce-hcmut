@@ -10,7 +10,7 @@ class trangchu
          //chức năng mặc định
         $act = "trangchu";
         //tiếp nhận chức năng user request
-        if (isset($_GET["act"])) $act = $_GET["act"];
+        if (isset($_GET["act"])) { $act = $_GET["act"]; }
         switch ($act) {
             case "trangchu":
                 $this->index();
@@ -27,7 +27,7 @@ class trangchu
         $list = $this->model->listrecords();
         $page_title = "Danh sách sữa";
         $page_files = "views/listmilk.php";
-        require_once("layout.php");
+        require_once "layout.php";
     }
 
     public function detail()
@@ -36,7 +36,7 @@ class trangchu
         $row = $this->model->detailrecord($ma);
         $page_title = "";
         $page_files = "views/detailmilk.php";
-        require_once("layout.php");
+        require_once "layout.php";
     }
 
 }
