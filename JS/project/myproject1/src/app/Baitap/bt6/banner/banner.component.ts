@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 
 
 
@@ -9,14 +9,11 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
     changeDetection: ChangeDetectionStrategy.Eager,
     standalone: false
 })
-export class BannerComponent implements OnInit {
+export class BannerComponent {
   public img1: string = 'assets/paris.jpg'
   public img2: string = 'assets/running-on-ground-1574160737-5309-1574161121-3.jpg'
   public img3: string = 'assets/sanfran.jpg'
 
   constructor() { }
-
-  ngOnInit(): void {
-  }
 
 }

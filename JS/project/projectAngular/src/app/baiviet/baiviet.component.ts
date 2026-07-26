@@ -15,8 +15,6 @@ export class BaivietComponent implements AfterViewInit {
 
   constructor(public dialog: MatDialog) { }
 
-  ngOnInit(): void {
-  }
   displayedColumns: string[] = ['position', 'subject', 'content', 'author'];
   dataSource = new MatTableDataSource<PeriodicElement>(ELEMENT_DATA);
   selection = new SelectionModel<PeriodicElement>(true, []);
