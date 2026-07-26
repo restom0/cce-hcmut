@@ -1,0 +1,13 @@
+{
+  "name": "cce-hcmut",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Repo-level tooling only; each app builds from its own subdirectory.",
+  "scripts": {
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "prettier": "^3.4.2"
+  }
+}
