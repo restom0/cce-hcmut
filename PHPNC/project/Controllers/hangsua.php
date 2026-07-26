@@ -10,7 +10,7 @@ class hangsua
         //chức năng mặc định
         $act = "index";
         //tiếp nhận chức năng user request
-        if (isset($_GET["act"])) $act = $_GET["act"];
+        if (isset($_GET["act"])) { $act = $_GET["act"]; }
         switch($act) {
             case "index":
                 $this->index();
@@ -101,10 +101,11 @@ class hangsua
         } else {
             $sql = "DELETE FROM hang_sua WHERE ma_hang_sua=?";
             $kq = $this->model->execute($sql, [$ma]);
-            if ($kq)
+            if ($kq) {
                 $_SESSION["thongbao"] = "Đã xoá hãng sữa này !!";
-            else
+            } else {
                 $_SESSION["thongbao"] = "Đã xoá hãng sữa THẤT BẠI !!";
+            }
         }
         header("location: " . ROOT_URL . "/?ctrl=hangsua");
     }

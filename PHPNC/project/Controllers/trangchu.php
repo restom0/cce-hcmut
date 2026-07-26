@@ -10,7 +10,7 @@ class trangchu
          //chức năng mặc định
         $act = "trangchu";
         //tiếp nhận chức năng user request
-        if (isset($_GET["act"])) $act = $_GET["act"];
+        if (isset($_GET["act"])) { $act = $_GET["act"]; }
         switch ($act) {
             case "trangchu":
                 $this->index();

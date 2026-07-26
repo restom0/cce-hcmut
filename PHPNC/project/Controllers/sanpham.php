@@ -10,7 +10,7 @@ class sanpham
          //chức năng mặc định
         $action = "sanpham";
         //tiếp nhận chức năng user request
-        if (isset($_GET["action"])) $action = $_GET["action"];
+        if (isset($_GET["action"])) { $action = $_GET["action"]; }
         switch ($action) {
             case "sanpham":
                 $this->listproduct();

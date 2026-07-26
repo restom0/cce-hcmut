@@ -4,7 +4,7 @@
 
     $ctrl='sanpham';
 
-    if(isset($_GET['ctrl'])) $ctrl=$_GET['ctrl'];
+    if(isset($_GET['ctrl'])) { $ctrl=$_GET['ctrl']; }
 
     if ($ctrl=="hangsua") {
         require_once "Controllers/hangsua.php";

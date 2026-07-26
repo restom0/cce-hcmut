@@ -10,7 +10,7 @@
 
 function changeTitle($str,$strSymbol='-',$case=MB_CASE_LOWER){// MB_CASE_UPPER / MB_CASE_TITLE / MB_CASE_LOWER
 	$str=trim($str);
-	if ($str=="") return "";
+	if ($str=="") { return ""; }
 	$str =str_replace('"','',$str);
 	$str =str_replace("'",'',$str);
 	$str = stripUnicode($str);
@@ -20,7 +20,7 @@ function changeTitle($str,$strSymbol='-',$case=MB_CASE_LOWER){// MB_CASE_UPPER /
 }
 
 function stripUnicode($str){
-	if(!$str) return '';
+	if(!$str) { return ''; }
 	//$str = str_replace($a, $b, $str);
 	$unicode = array(
 		'a'=>'á|à|ả|ã|ạ|ă|ắ|ằ|ẳ|ẵ|ặ|â|ấ|ầ|ẩ|ẫ|ậ|å|ä|æ|ā|ą|ǻ|ǎ',
