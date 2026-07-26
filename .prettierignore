@@ -1,0 +1,33 @@
+# Dependencies and build output
+**/node_modules/
+**/vendor/
+**/bower_components/
+**/dist/
+**/coverage/
+_packages/
+.vercel/
+
+# Generated / minified
+**/*.min.js
+**/*.min.css
+**/*.map
+
+# Vendored third-party libraries bundled with the coursework
+**/pluto-1.0.0/
+**/ckeditor/
+**/polylang/
+**/Template_BootStrap/
+**/GiaoDien_Front/
+**/full-width-slider*/
+**/assets/dest/
+**/Template/source/
+
+# Lecture material
+**/courses/
+
+# PHP is formatted by php-cs-fixer, not Prettier (Prettier has no PHP parser)
+**/*.php
+
+# Lockfiles
+**/package-lock.json
+**/composer.lock
