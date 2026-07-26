@@ -20,15 +20,15 @@ shipped a single PDF.
 
 ## The courses
 
-| Directory | Subject | Application in `project/` | Stack |
-|---|---|---|---|
-| [Bootstrap](Bootstrap) | Bootstrap & WordPress | Angular component source (not buildable on its own) | Angular, WordPress |
-| [HTML+CSS](HTML+CSS) | HTML & CSS | Static exam site | plain HTML/CSS/JS |
-| [JS](JS) | JavaScript, jQuery, Angular | Two Angular 22 apps | Angular 22, PHP drills |
-| [Lavarel](Lavarel) | Laravel | News site with admin | Laravel 10, MySQL |
-| [PHPCB](PHPCB) | PHP căn bản | Exam site on the pluto theme | plain PHP, MySQL |
-| [PHPNC](PHPNC) | PHP nâng cao | Two hand-rolled MVC shops | plain PHP, MySQL |
-| [ĐA](ĐA) | Đồ án | E-commerce site with admin | Laravel 10, MySQL |
+| Directory              | Subject                     | Application in `project/`                           | Stack                  |
+| ---------------------- | --------------------------- | --------------------------------------------------- | ---------------------- |
+| [Bootstrap](Bootstrap) | Bootstrap & WordPress       | Angular component source (not buildable on its own) | Angular, WordPress     |
+| [HTML+CSS](HTML+CSS)   | HTML & CSS                  | Static exam site                                    | plain HTML/CSS/JS      |
+| [JS](JS)               | JavaScript, jQuery, Angular | Two Angular 22 apps                                 | Angular 22, PHP drills |
+| [Lavarel](Lavarel)     | Laravel                     | News site with admin                                | Laravel 10, MySQL      |
+| [PHPCB](PHPCB)         | PHP căn bản                 | Exam site on the pluto theme                        | plain PHP, MySQL       |
+| [PHPNC](PHPNC)         | PHP nâng cao                | Two hand-rolled MVC shops                           | plain PHP, MySQL       |
+| [ĐA](ĐA)               | Đồ án                       | E-commerce site with admin                          | Laravel 10, MySQL      |
 
 ## Running things locally
 
@@ -45,12 +45,12 @@ Nothing here is deployed. These are local coursework applications.
 
 ## CI
 
-| Workflow | Does what |
-|---|---|
-| [deploy-vercel.yml](.github/workflows/deploy-vercel.yml) | Builds and deploys the three projects Vercel can serve: `HTML+CSS`, and both Angular apps |
-| [package-projects.yml](.github/workflows/package-projects.yml) | `php -l` over the PHP projects, then publishes each as a downloadable archive |
-| [sonar.yml](.github/workflows/sonar.yml) | SonarCloud scan of the whole repo |
-| [codeql.yml](.github/workflows/codeql.yml) | CodeQL over the JavaScript, excluding vendored libraries |
+| Workflow                                                       | Does what                                                                                 |
+| -------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| [deploy-vercel.yml](.github/workflows/deploy-vercel.yml)       | Builds and deploys the three projects Vercel can serve: `HTML+CSS`, and both Angular apps |
+| [package-projects.yml](.github/workflows/package-projects.yml) | `php -l` over the PHP projects, then publishes each as a downloadable archive             |
+| [sonar.yml](.github/workflows/sonar.yml)                       | SonarCloud scan of the whole repo                                                         |
+| [codeql.yml](.github/workflows/codeql.yml)                     | CodeQL over the JavaScript, excluding vendored libraries                                  |
 
 Vercel can't run PHP, and all four PHP apps need a MySQL database besides, so
 they are packaged as installable archives rather than deployed.

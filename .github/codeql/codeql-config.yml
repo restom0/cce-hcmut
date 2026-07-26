@@ -1,4 +1,4 @@
-name: "cce-hcmut CodeQL config"
+name: 'cce-hcmut CodeQL config'
 
 # Every CodeQL alert raised against this repo so far has been inside a vendored
 # third-party library, not code written for these courses. Patching minified
