@@ -86,25 +86,24 @@ jobs:
 
       # v5 is affected by an argument-injection advisory (Dependabot #385).
       #
-      # qualitygate.wait makes the scanner block until SonarCloud has finished
-      # computing the gate and exit non-zero if it fails, so a regression shows
-      # up here and not only on the dashboard. Done with the scanner's own flag
-      # rather than a second action: sonarqube-quality-gate-action was last
-      # released in 2025 and this repo has already been bitten once by an
-      # outdated Sonar action.
+      # branch.name=main, not master: CI runs on the master branch, but the
+      # SonarCloud project's main branch is named `main`. Uploading the analysis
+      # as `main` lands it on the project's main branch (the Overview), so
+      # coverage and findings actually show and the gate is computed against the
+      # main line. Labelling it `master` instead files it as a separate
+      # short-lived branch, which is why the Overview froze at its last `main`
+      # scan. The repo-side alternative to renaming the main branch to `master`
+      # in the SonarCloud UI.
       #
-      # continue-on-error keeps the gate *advisory* for now: the analysis
-      # uploads fine every run, but the gate-status read comes back "Not
-      # authorized or project not found" because the SonarCloud project's main
-      # branch is still `main` (this repo moved to `master`, so `master` is
-      # analysed as a short-lived branch whose new-code ref does not exist) and
-      # possibly because SONAR_TOKEN is a project-analysis token that cannot
-      # read the gate. Both are fixed on sonarcloud.io, not here: rename the
-      # project's main branch to `master` (Administration -> Branches and Pull
-      # Requests), and if it still fails, replace SONAR_TOKEN with a User Token
-      # (My Account -> Security). The gate result is still printed in this
-      # step's log; once it passes cleanly, drop the two continue-on-error
-      # lines below to make a gate failure fail the job again.
+      # qualitygate.wait makes the scanner block until SonarCloud has computed
+      # the gate and exit non-zero if it fails, turning a regression red here
+      # rather than only on the dashboard. Kept *advisory* with continue-on-error
+      # until a clean run confirms the gate now reads successfully (analysing the
+      # real main branch should clear the earlier "Not authorized or project not
+      # found"); if it still fails, SONAR_TOKEN is a project-analysis token and
+      # needs to be a User Token with Browse permission (My Account -> Security).
+      # Once it passes, drop the two continue-on-error lines to make a gate
+      # failure fail the job again.
       - name: SonarCloud scan and quality gate
         if: steps.creds.outputs.configured == 'true' && github.event_name != 'pull_request'
         continue-on-error: true
@@ -113,7 +112,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.branch.name=master
+            -Dsonar.branch.name=main
             -Dsonar.qualitygate.wait=true
 
       - name: SonarCloud pull request scan and quality gate
