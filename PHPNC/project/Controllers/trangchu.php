@@ -27,7 +27,7 @@ class trangchu
         $list = $this->model->listrecords();
         $page_title = "Danh sách sữa";
         $page_files = "views/listmilk.php";
-        require_once("layout.php");
+        require_once "layout.php";
     }
 
     public function detail()
@@ -36,7 +36,7 @@ class trangchu
         $row = $this->model->detailrecord($ma);
         $page_title = "";
         $page_files = "views/detailmilk.php";
-        require_once("layout.php");
+        require_once "layout.php";
     }
 
 }

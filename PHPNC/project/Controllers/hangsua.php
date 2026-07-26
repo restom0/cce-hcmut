@@ -40,13 +40,13 @@ class hangsua
         $list = $this->model->listrecords();
         $page_title = "Danh sách hãng sữa";
         $page_files = "views/hangsua/list.php";
-        require_once("layout.php");
+        require_once "layout.php";
     }
     public function addnew()
     {
         $page_title = "Thêm Hãng Sữa";
         $page_files = "views/hangsua/addnew.php";
-        require_once("layout.php");
+        require_once "layout.php";
     }
 
     public function store()
@@ -74,7 +74,7 @@ class hangsua
         $row = $this->model->detailrecord($ma);
         $page_title = "Cập nhật Hãng Sữa";
         $page_files = "views/hangsua/edit.php";
-        require_once("layout.php");
+        require_once "layout.php";
     }
     public function update()
     {

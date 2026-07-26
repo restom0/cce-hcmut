@@ -32,5 +32,4 @@
             $kq = $kq->fetch_assoc();
             return $kq;
         }
-    } //class 
-    ?>
+    } //class

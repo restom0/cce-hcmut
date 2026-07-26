@@ -1,6 +1,6 @@
 <?php
     session_start();
-    require_once("System/Config.php");
+    require_once "System/Config.php";
 
     $ctrl='sanpham';
 
@@ -15,5 +15,3 @@
     require_once "Controllers/sanpham.php";
     $controller = new sanpham;
     }
-
-

@@ -76,6 +76,3 @@ function stripUnicode($str){
 	}
 	return $str;
 }
-
-
-?>
