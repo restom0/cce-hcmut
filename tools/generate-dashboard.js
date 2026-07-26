@@ -6,8 +6,10 @@
 // The page is generated rather than hand-written so it cannot drift from what
 // is actually on disk. Re-run it after adding or renaming coursework.
 
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
+
+const DEMO_DATA = require('./dashboard-demo-data');
 
 const ROOT = path.resolve(__dirname, '..');
 
@@ -22,13 +24,28 @@ const COURSES = [
   { dir: 'ĐA', subject: 'Đồ án', stack: 'Laravel 12, MySQL' },
 ];
 
-const ls = (d) => { try { return fs.readdirSync(d).sort(); } catch { return []; } };
-const isDir = (p) => { try { return fs.statSync(p).isDirectory(); } catch { return false; } };
+const ls = (d) => {
+  try {
+    return fs.readdirSync(d).sort();
+  } catch {
+    return [];
+  }
+};
+const isDir = (p) => {
+  try {
+    return fs.statSync(p).isDirectory();
+  } catch {
+    return false;
+  }
+};
 const exists = (p) => fs.existsSync(p);
 
-const esc = (s) => String(s)
-  .replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
-  .replaceAll('"', '&quot;');
+const esc = (s) =>
+  String(s)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;');
 
 // Directory names include "+" and Vietnamese characters; encodeURI keeps path
 // separators intact while escaping the rest.
@@ -47,16 +64,18 @@ const stripTrailingSlashes = (s) => {
   while (end > 0 && s[end - 1] === '/') end -= 1;
   return s.slice(0, end);
 };
-const baseArg = process.argv.indexOf('--source-base');
-const SOURCE_BASE = baseArg !== -1 ? stripTrailingSlashes(process.argv[baseArg + 1] || '') : '';
+const sourceBaseArg = process.argv.findIndex((arg) => arg === '--source-base');
+const SOURCE_BASE =
+  sourceBaseArg !== -1 ? stripTrailingSlashes(process.argv[sourceBaseArg + 1] || '') : '';
 const srcHref = (p) => (SOURCE_BASE ? SOURCE_BASE + '/' + encodeURI(p) : encodeURI(p));
 
 const DEFAULT_REPO_SLUG = 'restom0/cce-hcmut';
 const DEFAULT_REPO_URL = `https://github.com/${DEFAULT_REPO_SLUG}`;
 const REPO_SLUG = process.env.GITHUB_REPOSITORY || DEFAULT_REPO_SLUG;
-const REPO_URL = process.env.GITHUB_REPOSITORY && process.env.GITHUB_SERVER_URL
-  ? `${stripTrailingSlashes(process.env.GITHUB_SERVER_URL)}/${REPO_SLUG}`
-  : DEFAULT_REPO_URL;
+const REPO_URL =
+  process.env.GITHUB_REPOSITORY && process.env.GITHUB_SERVER_URL
+    ? `${stripTrailingSlashes(process.env.GITHUB_SERVER_URL)}/${REPO_SLUG}`
+    : DEFAULT_REPO_URL;
 const DASHBOARD_URL = process.env.DASHBOARD_URL || 'https://cce-hcmut.vercel.app/';
 const GHCR_BASE = `ghcr.io/${REPO_SLUG}`;
 const optionalUrl = (name) => process.env[name] || '';
@@ -122,80 +141,132 @@ const CONTAINER_IMAGES = [
   { name: 'phpcb', source: 'PHPCB/project', image: `${GHCR_BASE}/phpcb` },
 ];
 
-function readCourse(c) {
-  const base = path.join(ROOT, c.dir);
-  // Linked only when present: HTML+CSS has no README on every branch, and a
-  // dashboard full of 404s is worse than one that omits a link.
-  const rec = {
-    ...c, lectures: [], baitap: [], labs: [], apps: [], project: null,
+const courseFile = (course, basePath, file) => ({
+  label: fileLabel(file),
+  file,
+  href: `${course.dir}/${basePath}/${file}`,
+});
+
+const readLectures = (course, coursesDir) =>
+  ls(coursesDir)
+    .filter((file) => !isDir(path.join(coursesDir, file)))
+    .map((file) => courseFile(course, 'courses', file));
+
+const readPractice = (course, coursesDir) =>
+  ls(path.join(coursesDir, 'BaiTap')).map((file) => courseFile(course, 'courses/BaiTap', file));
+
+const labSummary = (course, exercisesDir, lab) => {
+  const labPath = path.join(exercisesDir, lab);
+  const entries = ls(labPath);
+  const files = entries.filter((entry) => !isDir(path.join(labPath, entry)));
+  const dirs = entries.filter((entry) => isDir(path.join(labPath, entry)));
+  const folderSamples = dirs.slice(0, 5).map((dir) => dir + '/');
+  const sample = files.length ? files.slice(0, 5) : folderSamples;
+
+  return {
+    name: lab,
+    href: `${course.dir}/project/exercises/${lab}`,
+    count: files.length,
+    dirs: dirs.length,
+    sample,
+  };
+};
+
+const readLabs = (course, base) => {
+  const exercisesDir = path.join(base, 'project', 'exercises');
+
+  return ls(exercisesDir)
+    .filter((lab) => isDir(path.join(exercisesDir, lab)))
+    .map((lab) => labSummary(course, exercisesDir, lab));
+};
+
+const detectProjectKind = (has) => {
+  if (has('artisan')) return 'Laravel app';
+  if (has('index.php')) return 'PHP app';
+  if (has('index.html')) return 'Static site';
+  return 'Source only';
+};
+
+const dockerComposePort = (projectDir) => {
+  const composeFile = path.join(projectDir, 'docker-compose.yml');
+  if (!exists(composeFile)) return null;
+
+  const compose = fs.readFileSync(composeFile, 'utf8');
+  const portLine = compose.split(/\r?\n/).find((line) => line.includes(':80"'));
+  if (!portLine) return null;
+
+  const portMatch = portLine.match(/(\d+):80"/);
+  return portMatch ? portMatch[1] : null;
+};
+
+const readProject = (course, base) => {
+  const projectDir = path.join(base, 'project');
+  if (!isDir(projectDir)) return null;
+
+  const has = (file) => exists(path.join(projectDir, file));
+  return {
+    kind: detectProjectKind(has),
+    port: dockerComposePort(projectDir),
+    href: `${course.dir}/project`,
+    compose: has('docker-compose.yml'),
+  };
+};
+
+const readApps = (course, base) => {
+  const projectDir = path.join(base, 'project');
+
+  return ['projectAngular', 'myproject1']
+    .filter((app) => isDir(path.join(projectDir, app)))
+    .map((app) => ({ name: app, href: `${course.dir}/project/${app}` }));
+};
+
+function readCourse(course) {
+  const base = path.join(ROOT, course.dir);
+  const coursesDir = path.join(base, 'courses');
+
+  return {
+    ...course,
+    lectures: readLectures(course, coursesDir),
+    baitap: readPractice(course, coursesDir),
+    labs: readLabs(course, base),
+    apps: readApps(course, base),
+    project: readProject(course, base),
     hasReadme: exists(path.join(base, 'README.md')),
   };
-
-  const cdir = path.join(base, 'courses');
-  for (const f of ls(cdir)) {
-    if (isDir(path.join(cdir, f))) continue;
-    rec.lectures.push({ label: fileLabel(f), file: f, href: `${c.dir}/courses/${f}` });
-  }
-  for (const f of ls(path.join(cdir, 'BaiTap'))) {
-    rec.baitap.push({ label: fileLabel(f), file: f, href: `${c.dir}/courses/BaiTap/${f}` });
-  }
-
-  const exdir = path.join(base, 'project', 'exercises');
-  for (const lab of ls(exdir)) {
-    const p = path.join(exdir, lab);
-    if (!isDir(p)) continue;
-    const entries = ls(p);
-    const files = entries.filter((e) => !isDir(path.join(p, e)));
-    const dirs = entries.filter((e) => isDir(path.join(p, e)));
-    rec.labs.push({
-      name: lab,
-      href: `${c.dir}/project/exercises/${lab}`,
-      count: files.length,
-      dirs: dirs.length,
-      // Some labs are a single folder (a template or a WordPress tree) with no
-      // loose files; listing the folders is more use than saying "0 files".
-      sample: files.length ? files.slice(0, 5) : dirs.slice(0, 5).map((d) => d + '/'),
-    });
-  }
-
-  const pdir = path.join(base, 'project');
-  if (isDir(pdir)) {
-    const has = (f) => exists(path.join(pdir, f));
-    let kind = 'Source only';
-    if (has('artisan')) kind = 'Laravel app';
-    else if (has('index.php')) kind = 'PHP app';
-    else if (has('index.html')) kind = 'Static site';
-
-    let port = null;
-    if (has('docker-compose.yml')) {
-      const compose = fs.readFileSync(path.join(pdir, 'docker-compose.yml'), 'utf8');
-      for (const line of compose.split(/\r?\n/)) {
-        const end = line.indexOf(':80"');
-        if (end === -1) continue;
-        let start = end - 1;
-        while (start >= 0 && line[start] >= '0' && line[start] <= '9') start -= 1;
-        port = line.slice(start + 1, end);
-        break;
-      }
-    }
-    rec.project = { kind, port, href: `${c.dir}/project`, compose: has('docker-compose.yml') };
-  }
-
-  // The two Angular apps sit a level below JS/project.
-  for (const a of ['projectAngular', 'myproject1']) {
-    if (isDir(path.join(pdir, a))) rec.apps.push({ name: a, href: `${c.dir}/project/${a}` });
-  }
-  return rec;
 }
 
-const data = COURSES.map(readCourse);
+const totalsFor = (courses) =>
+  courses.reduce(
+    (t, c) => ({
+      lectures: t.lectures + c.lectures.length + c.baitap.length,
+      labs: t.labs + c.labs.length,
+    }),
+    { lectures: 0, labs: 0 },
+  );
 
-const totals = data.reduce((t, c) => ({
-  lectures: t.lectures + c.lectures.length + c.baitap.length,
-  labs: t.labs + c.labs.length,
-}), { lectures: 0, labs: 0 });
+const buildDashboardData = (courses, uiDeploys, packageArchives, containerImages) => ({
+  courses,
+  totals: totalsFor(courses),
+  uiDeploys,
+  packageArchives,
+  containerImages,
+});
 
-const pathLine = (label, value, hrefValue = value) => `<div><dt>${esc(label)}</dt>` +
+const rawData = buildDashboardData(
+  COURSES.map(readCourse),
+  UI_DEPLOYS,
+  PACKAGE_ARCHIVES,
+  CONTAINER_IMAGES,
+);
+const demoData = buildDashboardData(
+  DEMO_DATA.courses,
+  DEMO_DATA.uiDeploys,
+  DEMO_DATA.packageArchives,
+  DEMO_DATA.containerImages,
+);
+
+const pathLine = (label, value, hrefValue = value) =>
+  `<div><dt>${esc(label)}</dt>` +
   `<dd><a class="path" href="${srcHref(hrefValue)}">${esc(value)}</a></dd></div>`;
 
 const textLine = (label, value) => `<div><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`;
@@ -203,11 +274,14 @@ const textLine = (label, value) => `<div><dt>${esc(label)}</dt><dd>${esc(value)}
 const workflowButton = (label, href, tone = '') =>
   `<a class="${esc(['button', tone].filter(Boolean).join(' '))}" href="${esc(href)}">${esc(label)}</a>`;
 
-const uiDeployActions = (ui) => [
-  ui.href ? workflowButton('Open UI', ui.href, 'primary') : null,
-  workflowButton('Source', srcHref(ui.source)),
-  workflowButton('Deploy job', WORKFLOWS.deploy),
-].filter(Boolean).join('\n    ');
+const uiDeployActions = (ui) =>
+  [
+    ui.href ? workflowButton('Open UI', ui.href, 'primary') : null,
+    workflowButton('Source', srcHref(ui.source)),
+    workflowButton('Deploy job', WORKFLOWS.deploy),
+  ]
+    .filter(Boolean)
+    .join('\n    ');
 
 const uiDeployCard = (ui) => `<article class="deploy-card">
   <header>
@@ -248,7 +322,9 @@ const imageCard = (img) => `<article class="image-card">
   <code>${esc(img.image)}</code>
 </article>`;
 
-const deployDashboard = () => `<section class="deploy-section" aria-labelledby="deploy-title">
+const deployDashboard = (
+  uiDeploys,
+) => `<section class="deploy-section" aria-labelledby="deploy-title">
   <div class="section-head">
     <div>
       <p class="eyebrow">Deploy UI</p>
@@ -260,11 +336,14 @@ const deployDashboard = () => `<section class="deploy-section" aria-labelledby="
     </div>
   </div>
   <div class="deploy-grid">
-    ${UI_DEPLOYS.map(uiDeployCard).join('\n')}
+    ${uiDeploys.map(uiDeployCard).join('\n')}
   </div>
 </section>`;
 
-const packageDashboard = () => `<section class="deploy-section" aria-labelledby="packages-title">
+const packageDashboard = (
+  packageArchives,
+  containerImages,
+) => `<section class="deploy-section" aria-labelledby="packages-title">
   <div class="section-head">
     <div>
       <p class="eyebrow">Deploy packages</p>
@@ -277,46 +356,86 @@ const packageDashboard = () => `<section class="deploy-section" aria-labelledby=
     </div>
   </div>
   <div class="package-grid">
-    ${PACKAGE_ARCHIVES.map(archiveCard).join('\n')}
+    ${packageArchives.map(archiveCard).join('\n')}
   </div>
   <div class="image-grid">
-    ${CONTAINER_IMAGES.map(imageCard).join('\n')}
+    ${containerImages.map(imageCard).join('\n')}
   </div>
 </section>`;
 
+const chipItem = (item, linkBuilder) =>
+  `<li><a href="${linkBuilder(item)}" title="${esc(item.file || item.name)}">${esc(item.label || item.name)}</a></li>`;
+
+const row = (title, count, listClass, items) =>
+  `<div class="row"><h3>${esc(title)} <span class="n">${count}</span></h3><ul class="${esc(listClass)}">${items.join('')}</ul></div>`;
+
+const appsRow = (apps) => {
+  if (!apps.length) return '';
+  const items = apps.map((app) => chipItem(app, (item) => srcHref(item.href)));
+  return row('Apps', apps.length, 'chips', items);
+};
+
+const filesRow = (title, items, listClass) => {
+  if (!items.length) return '';
+  const links = items.map((item) => chipItem(item, (linkItem) => href(linkItem.href)));
+  return row(title, items.length, listClass, links);
+};
+
+const plural = (count, singular) => {
+  const suffix = count === 1 ? '' : 's';
+  return `${count} ${singular}${suffix}`;
+};
+
+const labMeta = (lab) => {
+  if (lab.count) return plural(lab.count, 'file');
+  return plural(lab.dirs, 'folder');
+};
+
+const labSample = (lab) => {
+  if (!lab.sample.length) return '';
+  const more = lab.count > lab.sample.length ? ' ...' : '';
+  return `<p class="lab-files">${esc(lab.sample.join(' · '))}${more}</p>`;
+};
+
+const labItem = (lab) =>
+  `<li><a href="${srcHref(lab.href)}"><span class="lab-name">${esc(lab.name)}</span>` +
+  `<span class="lab-meta">${esc(labMeta(lab))}</span></a>${labSample(lab)}</li>`;
+
+const labsRow = (labs) => {
+  if (!labs.length) return '<p class="empty">No labs recorded for this course.</p>';
+  return row('Labs', labs.length, 'labs', labs.map(labItem));
+};
+
+const runLine = (course) => {
+  if (!course.project?.compose) return '';
+  const command = `cd ${course.dir}/project && docker compose up`;
+  const port = course.project.port;
+  const portLink = port
+    ? ` <a class="port" href="http://localhost:${port}">localhost:${esc(port)}</a>`
+    : '';
+  return `<p class="run"><span class="run-label">Run</span> <code>${esc(command)}</code>${portLink}</p>`;
+};
+
+const courseFooter = (course) =>
+  [
+    course.hasReadme ? `<a href="${srcHref(course.dir + '/README.md')}">README</a>` : '',
+    course.project ? `<a href="${srcHref(course.project.href)}">project/</a>` : '',
+  ]
+    .filter(Boolean)
+    .join('');
+
 const card = (c) => {
-  const runLine = c.project && c.project.compose
-    ? `<p class="run"><span class="run-label">Run</span> <code>cd ${esc(c.dir)}/project &amp;&amp; docker compose up</code>${c.project.port ? ` <a class="port" href="http://localhost:${c.project.port}">localhost:${c.project.port}</a>` : ''}</p>`
-    : '';
-
-  const apps = c.apps.length
-    ? `<div class="row"><h3>Apps</h3><ul class="chips">${c.apps.map((a) =>
-        `<li><a href="${srcHref(a.href)}">${esc(a.name)}</a></li>`).join('')}</ul></div>`
-    : '';
-
-  const lectures = c.lectures.length
-    ? `<div class="row"><h3>Lectures <span class="n">${c.lectures.length}</span></h3><ul class="chips">${c.lectures.map((l) =>
-        `<li><a href="${href(l.href)}" title="${esc(l.file)}">${esc(l.label)}</a></li>`).join('')}</ul></div>`
-    : '';
-
-  const baitap = c.baitap.length
-    ? `<div class="row"><h3>Practice <span class="n">${c.baitap.length}</span></h3><ul class="chips alt">${c.baitap.map((l) =>
-        `<li><a href="${href(l.href)}" title="${esc(l.file)}">${esc(l.label)}</a></li>`).join('')}</ul></div>`
-    : '';
-
-  const labs = c.labs.length
-    ? `<div class="row"><h3>Labs <span class="n">${c.labs.length}</span></h3><ul class="labs">${c.labs.map((l) =>
-        `<li><a href="${srcHref(l.href)}"><span class="lab-name">${esc(l.name)}</span>` +
-        `<span class="lab-meta">${l.count
-            ? `${l.count} file${l.count === 1 ? '' : 's'}`
-            : `${l.dirs} folder${l.dirs === 1 ? '' : 's'}`}</span></a>` +
-        (l.sample.length ? `<p class="lab-files">${esc(l.sample.join(' · '))}${l.count > l.sample.length ? ' …' : ''}</p>` : '') +
-        `</li>`).join('')}</ul></div>`
-    : '<p class="empty">No labs recorded for this course.</p>';
-
-  const searchBlob = [c.dir, c.subject, c.stack,
-    ...c.lectures.map((l) => l.label), ...c.baitap.map((l) => l.label),
-    ...c.labs.map((l) => l.name + ' ' + l.sample.join(' '))].join(' ').toLowerCase();
+  const projectTag = c.project ? `<span class="tag muted">${esc(c.project.kind)}</span>` : '';
+  const searchBlob = [
+    c.dir,
+    c.subject,
+    c.stack,
+    ...c.lectures.map((l) => l.label),
+    ...c.baitap.map((l) => l.label),
+    ...c.labs.map((l) => l.name + ' ' + l.sample.join(' ')),
+  ]
+    .join(' ')
+    .toLowerCase();
 
   return `<article class="course" data-search="${esc(searchBlob)}">
   <header class="course-head">
@@ -326,20 +445,63 @@ const card = (c) => {
     </div>
     <div class="tags">
       <span class="tag">${esc(c.stack)}</span>
-      ${c.project ? `<span class="tag muted">${esc(c.project.kind)}</span>` : ''}
+      ${projectTag}
     </div>
   </header>
-  ${runLine}
-  ${apps}
-  ${lectures}
-  ${baitap}
-  ${labs}
+  ${runLine(c)}
+  ${appsRow(c.apps)}
+  ${filesRow('Lectures', c.lectures, 'chips')}
+  ${filesRow('Practice', c.baitap, 'chips alt')}
+  ${labsRow(c.labs)}
   <footer class="course-foot">
-    ${c.hasReadme ? `<a href="${srcHref(c.dir + '/README.md')}">README</a>` : ''}
-    ${c.project ? `<a href="${srcHref(c.project.href)}">project/</a>` : ''}
+    ${courseFooter(c)}
   </footer>
 </article>`;
 };
+
+const stats = (dataset) => `<li><b>${dataset.courses.length}</b> courses</li>
+      <li><b>${dataset.uiDeploys.length}</b> UI deploys</li>
+      <li><b>${dataset.packageArchives.length}</b> archives</li>
+      <li><b>${dataset.containerImages.length}</b> images</li>
+      <li><b>${dataset.totals.lectures}</b> lectures &amp; sheets</li>
+      <li><b>${dataset.totals.labs}</b> labs</li>`;
+
+const dashboardBody = (dataset) => `${deployDashboard(dataset.uiDeploys)}
+  ${packageDashboard(dataset.packageArchives, dataset.containerImages)}
+
+  <div class="search" id="coursework">
+    <label for="q" class="visually-hidden">Filter courses and labs</label>
+    <input id="q" type="search" placeholder="Filter by course, lecture or lab..." autocomplete="off">
+  </div>
+
+  <main class="grid" id="grid">
+${dataset.courses.map(card).join('\n')}
+  </main>
+  <p id="none">Nothing matches that filter.</p>`;
+
+const note = () =>
+  SOURCE_BASE
+    ? `Lecture PDFs are served from this site. Labs, apps and READMEs are source,
+         so they link to <a href="${esc(SOURCE_BASE)}">GitHub</a>. Deploy package cards point
+         to Actions artifacts, releases and GHCR image references for the PHP apps.`
+    : `Links are relative, so this page works from a clone: open <code>index.html</code>
+         directly, or serve the repo root. Regenerate after changing coursework with
+         <code>node tools/generate-dashboard.js</code>.`;
+
+const jsonForScript = (value) => JSON.stringify(value).replaceAll('<', '\\u003c');
+
+const clientDatasets = jsonForScript({
+  raw: {
+    body: dashboardBody(rawData),
+    stats: stats(rawData),
+    copy: 'Real repository data from the current coursework tree.',
+  },
+  demo: {
+    body: dashboardBody(demoData),
+    stats: stats(demoData),
+    copy: 'Dummy demo data for showing the main publish flow without using raw coursework paths.',
+  },
+});
 
 const html = `<!doctype html>
 <html lang="en">
@@ -367,6 +529,14 @@ const html = `<!doctype html>
     font: 15px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   }
   .wrap { max-width: 1100px; margin: 0 auto; padding: 32px 20px 64px; }
+  .top-nav {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+    margin: 0 0 18px; padding: 0 0 14px; border-bottom: 1px solid var(--line);
+  }
+  .top-nav a { color: var(--fg); text-decoration: none; font-size: .82rem; }
+  .top-nav a:not(.button) { padding: 5px 2px; }
+  .top-nav a:hover { color: var(--accent); }
+  .top-nav .mode { margin-left: auto; }
   header.top h1 { margin: 0 0 4px; font-size: 1.6rem; letter-spacing: 0; }
   header.top p { margin: 0; color: var(--muted); }
   .stats { display: flex; gap: 18px; flex-wrap: wrap; margin: 18px 0 0; padding: 0; list-style: none; }
@@ -459,7 +629,7 @@ const html = `<!doctype html>
   ul.labs a:hover .lab-name { text-decoration: underline; }
   .lab-name { font-weight: 600; font-size: .9rem; }
   .lab-meta { color: var(--muted); font-size: .78rem; }
-  .lab-files { margin: 2px 0 0; color: var(--muted); font-size: .78rem; word-break: break-word; }
+  .lab-files { margin: 2px 0 0; color: var(--muted); font-size: .78rem; overflow-wrap: anywhere; }
   .empty { color: var(--muted); font-size: .85rem; font-style: italic; }
   .course-foot { margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--line); display: flex; gap: 14px; }
   .course-foot a { color: var(--accent); text-decoration: none; font-size: .82rem; }
@@ -479,60 +649,95 @@ const html = `<!doctype html>
 <body>
 <div class="wrap">
   <header class="top">
+    <nav class="top-nav" aria-label="Dashboard">
+      <a href="#deploy-title">Deploy UI</a>
+      <a href="#packages-title">Packages</a>
+      <a href="#coursework">Coursework</a>
+      <a class="button primary mode" id="mode-toggle" href="?demo=1" aria-pressed="false">Demo mode</a>
+    </nav>
     <h1>cce-hcmut deploy dashboard</h1>
-    <p>One place for the live Vercel UI targets, downloadable deploy packages, container images, and coursework catalog.</p>
-    <ul class="stats">
-      <li><b>${data.length}</b> courses</li>
-      <li><b>${UI_DEPLOYS.length}</b> UI deploys</li>
-      <li><b>${PACKAGE_ARCHIVES.length}</b> archives</li>
-      <li><b>${CONTAINER_IMAGES.length}</b> images</li>
-      <li><b>${totals.lectures}</b> lectures &amp; sheets</li>
-      <li><b>${totals.labs}</b> labs</li>
+    <p id="mode-copy">Real repository data from the current coursework tree.</p>
+    <ul class="stats" id="stats">
+      ${stats(rawData)}
     </ul>
   </header>
 
-  ${deployDashboard()}
-  ${packageDashboard()}
-
-  <div class="search">
-    <label for="q" class="visually-hidden">Filter courses and labs</label>
-    <input id="q" type="search" placeholder="Filter by course, lecture or lab…" autocomplete="off">
+  <div id="dashboard-root">
+  ${dashboardBody(rawData)}
   </div>
 
-  <main class="grid" id="grid">
-${data.map(card).join('\n')}
-  </main>
-  <p id="none">Nothing matches that filter.</p>
-
   <p class="note">
-    ${SOURCE_BASE
-      ? `Lecture PDFs are served from this site. Labs, apps and READMEs are source,
-         so they link to <a href="${esc(SOURCE_BASE)}">GitHub</a>. Deploy package cards point
-         to Actions artifacts, releases and GHCR image references for the PHP apps.`
-      : `Links are relative, so this page works from a clone: open <code>index.html</code>
-         directly, or serve the repo root. Regenerate after changing coursework with
-         <code>node tools/generate-dashboard.js</code>.`}
+    ${note()}
   </p>
 </div>
 
 <script>
-  var q = document.getElementById('q');
-  var cards = Array.prototype.slice.call(document.querySelectorAll('.course'));
-  var none = document.getElementById('none');
-  q.addEventListener('input', function () {
-    var term = q.value.trim().toLowerCase();
-    var shown = 0;
-    cards.forEach(function (el) {
-      var hit = !term || el.dataset.search.indexOf(term) !== -1;
-      el.hidden = !hit;
-      if (hit) shown++;
+  var datasets = ${clientDatasets};
+  var dashboardRoot = document.getElementById('dashboard-root');
+  var statsList = document.getElementById('stats');
+  var modeCopy = document.getElementById('mode-copy');
+  var modeToggle = document.getElementById('mode-toggle');
+
+  function bindSearch() {
+    var q = document.getElementById('q');
+    var cards = Array.prototype.slice.call(document.querySelectorAll('.course'));
+    var none = document.getElementById('none');
+    q.addEventListener('input', function () {
+      var term = q.value.trim().toLowerCase();
+      var shown = 0;
+      cards.forEach(function (el) {
+        var hit = !term || el.dataset.search.includes(term);
+        el.hidden = !hit;
+        if (hit) shown++;
+      });
+      none.style.display = shown ? 'none' : 'block';
     });
-    none.style.display = shown ? 'none' : 'block';
+  }
+
+  function replaceUrl(mode) {
+    if (!window.history || !window.URLSearchParams) return;
+    var params = new URLSearchParams(window.location.search);
+    if (mode === 'demo') params.set('demo', '1');
+    else params.delete('demo');
+    var query = params.toString();
+    var nextUrl = window.location.pathname + (query ? '?' + query : '') + window.location.hash;
+    try {
+      window.history.replaceState(null, '', nextUrl);
+    } catch {
+      return;
+    }
+  }
+
+  function setMode(mode, shouldReplaceUrl) {
+    var next = datasets[mode] ? mode : 'raw';
+    document.body.dataset.mode = next;
+    dashboardRoot.innerHTML = datasets[next].body;
+    statsList.innerHTML = datasets[next].stats;
+    modeCopy.textContent = datasets[next].copy;
+    modeToggle.textContent = next === 'demo' ? 'Raw data' : 'Demo mode';
+    modeToggle.href = next === 'demo' ? '?' : '?demo=1';
+    modeToggle.setAttribute('aria-pressed', next === 'demo' ? 'true' : 'false');
+    bindSearch();
+    if (shouldReplaceUrl) replaceUrl(next);
+  }
+
+  modeToggle.addEventListener('click', function (event) {
+    event.preventDefault();
+    setMode(document.body.dataset.mode === 'demo' ? 'raw' : 'demo', true);
   });
+
+  var initialMode =
+    window.URLSearchParams && new URLSearchParams(window.location.search).get('demo') === '1'
+      ? 'demo'
+      : 'raw';
+  setMode(initialMode, false);
 </script>
 </body>
 </html>
 `;
 
 fs.writeFileSync(path.join(ROOT, 'index.html'), html, 'utf8');
-console.log(`index.html written: ${data.length} courses, ${totals.lectures} lectures/sheets, ${totals.labs} labs`);
+console.log(
+  `index.html written: ${rawData.courses.length} courses, ` +
+    `${rawData.totals.lectures} lectures/sheets, ${rawData.totals.labs} labs`,
+);

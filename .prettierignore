@@ -24,6 +24,23 @@ _packages/
 
 # Lecture material
 **/courses/
+**/exercises/
+
+# Archived coursework apps keep original student formatting and include
+# intentionally broken classroom snippets.
+Bootstrap/README.md
+ĐA/README.md
+JS/README.md
+Lavarel/README.md
+PHPCB/README.md
+PHPNC/README.md
+Bootstrap/project/app/
+JS/project/myproject1/
+JS/project/projectAngular/
+Lavarel/project/
+ĐA/project/
+PHPCB/project/
+PHPNC/project/
 
 # PHP is formatted by php-cs-fixer, not Prettier (Prettier has no PHP parser)
 **/*.php
